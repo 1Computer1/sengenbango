@@ -1,0 +1,477 @@
+[
+	{ "source": "tatoeba", "jp": "だから、なに？", "en": "So what are you implying?", "score": -17.928 },
+	{ "source": "tatoeba", "jp": "彼女はなにも言わなかった。", "en": "She did not say anything.", "score": -18.485 },
+	{ "source": "tatoeba", "jp": "なにか問題でも？", "en": "What's the matter?", "score": -19.052 },
+	{ "source": "tatoeba", "jp": "なにが言いたいのですか。", "en": "What are you driving at?", "score": -21.104 },
+	{ "source": "tatoeba", "jp": "結局なにも起こらなかった。", "en": "Nothing happened after all.", "score": -23.242 },
+	{ "source": "tatoeba", "jp": "なに噛んでるの？", "en": "What are you crunching on?", "score": -25.765 },
+	{ "source": "tatoeba", "jp": "不可能以外のなにものでもない。", "en": "It's all but impossible.", "score": -26.593 },
+	{ "source": "tatoeba", "jp": "火元はなに？", "en": "What is the origin of the fire?", "score": -27.231 },
+	{ "source": "tatoeba", "jp": "なに？ありえない！", "en": "What? I can't believe it!", "score": -27.505 },
+	{
+		"source": "tatoeba",
+		"jp": "なに？聞こえないんだけど。",
+		"en": "What? I can't hear what you're saying.",
+		"score": -28.351
+	},
+	{ "source": "tatoeba", "jp": "もう～、なにやってんだよ。", "en": "Jeez, what're you up to?", "score": -28.732 },
+	{ "source": "tatoeba", "jp": "「トム！」「なに？」", "en": "Tom! \"What?\"", "score": -29.008 },
+	{
+		"source": "tatoeba",
+		"jp": "どうしてなにも言わなかったのですか。",
+		"en": "Why didn't you say anything?",
+		"score": -29.569
+	},
+	{
+		"source": "tatoeba",
+		"jp": "なによりも健康が第一です。",
+		"en": "Health is more important than anything else.",
+		"score": -29.943
+	},
+	{
+		"source": "tatoeba",
+		"jp": "私はこの３日間なにも食べていない。",
+		"en": "I have not eaten anything for the last three days.",
+		"score": -30.491
+	},
+	{
+		"source": "tatoeba",
+		"jp": "事故などはなにもありませんでした。",
+		"en": "I didn't have any accidents or other problems.",
+		"score": -30.995
+	},
+	{
+		"source": "tatoeba",
+		"jp": "あなたが好きな春の花はなに？",
+		"en": "What's your favorite spring flower?",
+		"score": -31.46
+	},
+	{ "source": "tatoeba", "jp": "郵便番号って、なに？", "en": "What is a postal code?", "score": -31.671 },
+	{
+		"source": "tatoeba",
+		"jp": "私たちはなにがなんでも勝ちたかった。",
+		"en": "We wanted to win at all costs.",
+		"score": -32.418
+	},
+	{ "source": "tatoeba", "jp": "東京へなにしに行くの？", "en": "What are you going to Tokyo for?", "score": -32.445 },
+	{
+		"source": "tatoeba",
+		"jp": "なにげに話を聞いていたのね。",
+		"en": "You were just listening to the talk, without thinking.",
+		"score": -32.777
+	},
+	{
+		"source": "tatoeba",
+		"jp": "なにも言わなかったことに腹をたてた。",
+		"en": "The fact that I said nothing made him angry.",
+		"score": -32.913
+	},
+	{ "source": "tatoeba", "jp": "なに、中古だよ。", "en": "No, it's second hand.", "score": -32.991 },
+	{ "source": "tatoeba", "jp": "WhatsAppって、なに？", "en": "What's WhatsApp?", "score": -33.218 },
+	{
+		"source": "tatoeba",
+		"jp": "私はなにがおこったのか全く分からなかった。",
+		"en": "I was in entire ignorance of what had happened.",
+		"score": -33.792
+	},
+	{
+		"source": "tatoeba",
+		"jp": "次になにをしたらいいか教えてくれ。",
+		"en": "Tell us what to do next.",
+		"score": -33.811
+	},
+	{
+		"source": "tatoeba",
+		"jp": "一応聞きますが、なにをするつもりですか。",
+		"en": "I'll ask just in case. What are you trying to do?",
+		"score": -33.869
+	},
+	{
+		"source": "tatoeba",
+		"jp": "やべえ、なに言ってんのかわからねえ。",
+		"en": "Shit, I have no idea what they're saying.",
+		"score": -33.945
+	},
+	{ "source": "tatoeba", "jp": "この魚はなに色ですか？", "en": "What colour is this fish?", "score": -34.386 },
+	{
+		"source": "tatoeba",
+		"jp": "なにかおいしい飲み物をください。",
+		"en": "Give me something nice to drink.",
+		"score": -34.46
+	},
+	{
+		"source": "tatoeba",
+		"jp": "「二人で何を話してたの？」「なにも」",
+		"en": "What were you two talking about? \"Nothing.\"",
+		"score": -35.524
+	},
+	{
+		"source": "tatoeba",
+		"jp": "彼ならなにをしてもほめられる。",
+		"en": "No matter what he may do, he will be praised.",
+		"score": -35.646
+	},
+	{ "source": "tatoeba", "jp": "ここの自慢料理はなに？", "en": "What's your speciality?", "score": -35.688 },
+	{ "source": "tatoeba", "jp": "一番好きな果物って、なに？", "en": "What's your favourite fruit?", "score": -35.751 },
+	{
+		"source": "tatoeba",
+		"jp": "農民たちは、なにをするのかわからなかった。",
+		"en": "The farmers didn't know what to do.",
+		"score": -36.368
+	},
+	{
+		"source": "tatoeba",
+		"jp": "あの娘はなにを着てもかわいい。",
+		"en": "She looks pretty no matter what she wears.",
+		"score": -37.469
+	},
+	{
+		"source": "tatoeba",
+		"jp": "残ったものはなにひとつありませんでした。",
+		"en": "There was nothing left over.",
+		"score": -37.588
+	},
+	{ "source": "tatoeba", "jp": "一番好きな格言って、なに？", "en": "What's your favorite quote?", "score": -37.729 },
+	{
+		"source": "tatoeba",
+		"jp": "彼は私たちになにが欲しいか尋ねた。",
+		"en": "He asked us what we wanted.",
+		"score": -38.039
+	},
+	{
+		"source": "tatoeba",
+		"jp": "あんた、うちの家でなにやってんだ？",
+		"en": "What're you doing in my house?",
+		"score": -38.407
+	},
+	{
+		"source": "tatoeba",
+		"jp": "窓の方へ目を向けたがなにも見えなかった。",
+		"en": "I looked in the direction of the window, but didn't see anything.",
+		"score": -38.491
+	},
+	{
+		"source": "tatoeba",
+		"jp": "彼はただ新聞を読むだけでなにもしなかった。",
+		"en": "He did nothing but read newspapers.",
+		"score": -38.649
+	},
+	{
+		"source": "tatoeba",
+		"jp": "今、映画館でなにをやってるのですか？",
+		"en": "What's playing at the movie theater now?",
+		"score": -38.882
+	},
+	{ "source": "tatoeba", "jp": "1番好きなスパイスって、なに？", "en": "What's your favorite spice?", "score": -38.919 },
+	{
+		"source": "tatoeba",
+		"jp": "私は彼女になにをすべきか言いました。",
+		"en": "I told her what to do.",
+		"score": -39.626
+	},
+	{
+		"source": "tatoeba",
+		"jp": "言うまでもなく、エドナはなにもできない。",
+		"en": "Suffice to say, Edna gets no work done.",
+		"score": -39.801
+	},
+	{
+		"source": "tatoeba",
+		"jp": "朝ごはんにはなにがよろしいですか。",
+		"en": "What would you like for breakfast?",
+		"score": -40.155
+	},
+	{
+		"source": "tatoeba",
+		"jp": "なにをやるにも一生懸命やりなさい。",
+		"en": "In doing anything, you must do your best.",
+		"score": -40.205
+	},
+	{
+		"source": "tatoeba",
+		"jp": "なにか申告するものがありますか。",
+		"en": "Do you have anything to declare?",
+		"score": -40.742
+	},
+	{
+		"source": "tatoeba",
+		"jp": "あなたは朝食の前になにをしますか。",
+		"en": "What do you do before breakfast?",
+		"score": -41.488
+	},
+	{
+		"source": "tatoeba",
+		"jp": "なにニヤニヤしてるんだよ。何かいいことあったのか。",
+		"en": "What are you smirking at? Did something good happen?",
+		"score": -41.952
+	},
+	{ "source": "tatoeba", "jp": "君はなにで目を覚ましましたか。", "en": "What woke you up?", "score": -42.128 },
+	{
+		"source": "tatoeba",
+		"jp": "私は今ではそれについてなにも覚えていません。",
+		"en": "I have no remembrance of it now.",
+		"score": -43.18
+	},
+	{
+		"source": "tatoeba",
+		"jp": "骨惜しみをしてはなにも得ない。",
+		"en": "Nothing can be gained without effort.",
+		"score": -43.3
+	},
+	{
+		"source": "tatoeba",
+		"jp": "手になにを持っているか私に教えてください。",
+		"en": "Tell me what you have in your hand.",
+		"score": -43.533
+	},
+	{
+		"source": "tatoeba",
+		"jp": "てめえ、なに俺の彼女ジロジロ見てんだよ。",
+		"en": "What are you doing staring at my girlfriend like that?",
+		"score": -43.553
+	},
+	{
+		"source": "tatoeba",
+		"jp": "彼女はフランス語で話すのでなにを言っているのかわからない。",
+		"en": "Since she speaks in French, I can't understand her.",
+		"score": -44.095
+	},
+	{
+		"source": "tatoeba",
+		"jp": "子供はいつもなにかしらいたずらをしている。",
+		"en": "Children are always doing some mischief or other.",
+		"score": -44.214
+	},
+	{ "source": "tatoeba", "jp": "あの人達はなにを商売にしているの。", "en": "What do they deal in?", "score": -44.451 },
+	{
+		"source": "tatoeba",
+		"jp": "なにが起きようとも私は決心を変えない。",
+		"en": "Come what may, I won't change my mind.",
+		"score": -44.547
+	},
+	{
+		"source": "tatoeba",
+		"jp": "あの店ではもう買う物がなにもない。",
+		"en": "There is nothing to be had at that store.",
+		"score": -44.72
+	},
+	{
+		"source": "tatoeba",
+		"jp": "彼はなにもしないで手をこまねいているだけだった。",
+		"en": "He did nothing but fold his arms.",
+		"score": -45.178
+	},
+	{
+		"source": "tatoeba",
+		"jp": "彼がその事についてなにも知らないとは不思議だ。",
+		"en": "It is strange that he knows nothing about the matter.",
+		"score": -45.515
+	},
+	{
+		"source": "tatoeba",
+		"jp": "蚊を退治する一番いい方法って、なに？",
+		"en": "What's the best way to get rid of mosquitoes?",
+		"score": -45.612
+	},
+	{
+		"source": "tatoeba",
+		"jp": "彼の化学の講義は苦痛以外のなにものでもなかった。",
+		"en": "His lecture on chemistry was nothing but torture.",
+		"score": -45.623
+	},
+	{
+		"source": "tatoeba",
+		"jp": "私達はなにをするように言われたのだっけ。",
+		"en": "What was it that we were told to do?",
+		"score": -45.71
+	},
+	{
+		"source": "tatoeba",
+		"jp": "いいですね。私には誰もなにもくれない。",
+		"en": "That's great. Nobody gives me anything.",
+		"score": -45.936
+	},
+	{
+		"source": "tatoeba",
+		"jp": "なにもすることがないから、テレビを見たっていいだろう。",
+		"en": "There's nothing to do, so I may as well watch television.",
+		"score": -46.178
+	},
+	{
+		"source": "tatoeba",
+		"jp": "敵はこちらに近づけないのでなにもできません。",
+		"en": "The enemy can't close in on us so they can't do anything.",
+		"score": -46.471
+	},
+	{
+		"source": "tatoeba",
+		"jp": "ジェーンさんは明日の朝なにをしますか。",
+		"en": "What is Jane going to do tomorrow morning?",
+		"score": -46.628
+	},
+	{ "source": "tatoeba", "jp": "なにちんたら歩いてんだ。", "en": "Get a move on!", "score": -46.715 },
+	{
+		"source": "tatoeba",
+		"jp": "もし１０歳若ければ、あなたはなにをしますか。",
+		"en": "What would you do if you were ten years younger?",
+		"score": -47.13
+	},
+	{
+		"source": "tatoeba",
+		"jp": "彼がなにを言おうと落ち着きを失ってはいけない。",
+		"en": "Don't lose your temper whatever he may say.",
+		"score": -47.219
+	},
+	{
+		"source": "tatoeba",
+		"jp": "なによりもまず、今君は働かなければならない。",
+		"en": "Above all, you must work now.",
+		"score": -47.266
+	},
+	{
+		"source": "tatoeba",
+		"jp": "断った場合に、それに代わるものはなにか。",
+		"en": "If we decline, what are the alternatives?",
+		"score": -48.076
+	},
+	{
+		"source": "tatoeba",
+		"jp": "お前なにメアリーのことずっと見てんだよ。",
+		"en": "You're looking at Mary all the time!",
+		"score": -48.257
+	},
+	{
+		"source": "tatoeba",
+		"jp": "「今晩のご飯、なに？」「焼き鮭にしようかな」",
+		"en": "What's for dinner tonight? \"I'm thinking of making grilled salmon.\"",
+		"score": -48.656
+	},
+	{
+		"source": "tatoeba",
+		"jp": "なにがなんでも、彼女は明日手術を受けるでしょう。",
+		"en": "For better or worse, she will have the operation tomorrow.",
+		"score": -49.519
+	},
+	{
+		"source": "tatoeba",
+		"jp": "私はなによりもまずこの辞書を手に入れたい。",
+		"en": "I want to have this dictionary most of all.",
+		"score": -49.712
+	},
+	{
+		"source": "tatoeba",
+		"jp": "「今日の晩ご飯、なに？」「鮭を焼こうかな」",
+		"en": "What's for dinner tonight? \"I'm thinking of making grilled salmon.\"",
+		"score": -50.262
+	},
+	{ "source": "tatoeba", "jp": "君はそれをなにで開けましたか。", "en": "What did you open it with?", "score": -50.269 },
+	{
+		"source": "tatoeba",
+		"jp": "メキシコではなに語を話すのですか。",
+		"en": "What is the language spoken in Mexico?",
+		"score": -50.357
+	},
+	{
+		"source": "tatoeba",
+		"jp": "ちょっと！なに通せんぼやってんのよ。",
+		"en": "Hey! What are you doing blocking the way?",
+		"score": -50.515
+	},
+	{ "source": "tatoeba", "jp": "なにがその机の側にありますか。", "en": "What's beside the desk?", "score": -51.614 },
+	{
+		"source": "tatoeba",
+		"jp": "その見本市には注目に値するものはなにもなかった。",
+		"en": "There was nothing worthy of remark at the fair.",
+		"score": -51.679
+	},
+	{
+		"source": "tatoeba",
+		"jp": "ご質問の点に関しては、言うべきことはなにもありません。",
+		"en": "In respect to your question, I have nothing to say.",
+		"score": -51.796
+	},
+	{
+		"source": "tatoeba",
+		"jp": "なに、彼に援助を求めるだけでいいのさ。",
+		"en": "Well, you have only to ask for his help.",
+		"score": -51.845
+	},
+	{
+		"source": "tatoeba",
+		"jp": "人はなによりもまずその外見によって判断される。",
+		"en": "One will be judged by one's appearance first of all.",
+		"score": -51.94
+	},
+	{
+		"source": "tatoeba",
+		"jp": "先生は生徒のなにも質問させなかった。",
+		"en": "The teacher didn't let the students ask any questions.",
+		"score": -52.221
+	},
+	{
+		"source": "tatoeba",
+		"jp": "彼の筆跡は大変まずい。なにがなんだかわからない。",
+		"en": "His handwriting is very poor, I cannot make head or tail of it.",
+		"score": -52.579
+	},
+	{
+		"source": "tatoeba",
+		"jp": "事の次第がわかるまでは、君はなにもいえない。",
+		"en": "You can't say anything till you know the circumstances.",
+		"score": -52.599
+	},
+	{
+		"source": "tatoeba",
+		"jp": "「ねえメアリー」「なに？」「メアリーって彼氏いるの？」「なんで？」",
+		"en": "Hey, Mary. \"What?\" \"Do you have a boyfriend?\" \"Why?\"",
+		"score": -53.296
+	},
+	{
+		"source": "tatoeba",
+		"jp": "だからって・・・なにもひっぱたくことないじゃないか。",
+		"en": "Even so ... she didn't have to slap me!",
+		"score": -53.296
+	},
+	{
+		"source": "tatoeba",
+		"jp": "それって「ダーティー・ハリー」かなにか。",
+		"en": "Is it like \"Dirty Harry\"?",
+		"score": -54.602
+	},
+	{
+		"source": "tatoeba",
+		"jp": "荷造りを除いては、することはなにも残っていない。",
+		"en": "There's nothing left to do aside from packing.",
+		"score": -55.802
+	},
+	{
+		"source": "tatoeba",
+		"jp": "内容はさておき、なにこの物々しい話し方は？",
+		"en": "Leaving what it means to one side, what's with the high-falutin' language?",
+		"score": -56.588
+	},
+	{
+		"source": "tatoeba",
+		"jp": "人は天から与えられるのでなければ、なにもうけることはできません。",
+		"en": "A man can receive only what is given to him from heaven.",
+		"score": -59.195
+	},
+	{
+		"source": "tatoeba",
+		"jp": "なにも彼の過去のミスを償うことはできないでしょう。",
+		"en": "Nothing will make up for his past mistakes.",
+		"score": -60.807
+	},
+	{
+		"source": "tatoeba",
+		"jp": "なにが起ころうとも、私は最後まで、私の主義を守るつもりだ。",
+		"en": "Whatever happens, I'll stick to my principles to the bitter end.",
+		"score": -60.949
+	},
+	{
+		"source": "tatoeba",
+		"jp": "なにも田中さんの力がオンリーだというのはない。",
+		"en": "This is not to say that Mr. Tanaka did it all on his own.",
+		"score": -61.171
+	}
+]

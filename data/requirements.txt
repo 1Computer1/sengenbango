@@ -1,0 +1,7 @@
+lxml
+alive-progress
+tqdm
+numpy
+jaconv
+tensorflow
+pandas
