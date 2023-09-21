@@ -23,6 +23,4 @@
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode
 
 *.dump
-/caddy_data
-/caddy_config
 /postgresdata
