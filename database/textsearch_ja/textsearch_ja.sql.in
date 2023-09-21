@@ -3,6 +3,21 @@ SET search_path = public;
 BEGIN;
 
 --
+-- English without stop words
+--
+
+CREATE TEXT SEARCH DICTIONARY english_stem_nostop (
+    TEMPLATE = snowball,
+    LANGUAGE = english
+);
+
+CREATE TEXT SEARCH CONFIGURATION public.english_nostop (COPY = pg_catalog.english);
+
+ALTER TEXT SEARCH CONFIGURATION public.english_nostop ALTER MAPPING
+   FOR asciiword, asciihword, hword_asciipart, hword, hword_part, word
+   WITH english_stem_nostop;
+
+--
 -- Japanese text parser
 --
 
@@ -79,7 +94,7 @@ ALTER TEXT SEARCH CONFIGURATION pg_catalog.japanese ADD MAPPING
 
 ALTER TEXT SEARCH CONFIGURATION pg_catalog.japanese ADD MAPPING
     FOR asciiword, hword_asciipart, asciihword
-    WITH english_stem;
+    WITH english_stem_nostop;
 
 ALTER TEXT SEARCH CONFIGURATION pg_catalog.japanese ADD MAPPING
     FOR word, hword_part, hword
@@ -99,7 +114,7 @@ ALTER TEXT SEARCH CONFIGURATION pg_catalog.japanese_with_types ADD MAPPING
 
 ALTER TEXT SEARCH CONFIGURATION pg_catalog.japanese_with_types ADD MAPPING
     FOR asciiword, hword_asciipart, asciihword
-    WITH english_stem;
+    WITH english_stem_nostop;
 
 ALTER TEXT SEARCH CONFIGURATION pg_catalog.japanese_with_types ADD MAPPING
     FOR word, hword_part, hword

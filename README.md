@@ -11,7 +11,6 @@ Parallel JP-EN corpora search combining multiple corpora. See [here](data/README
 
 ## Todo
 
-- Try out the [RUM index](https://github.com/postgrespro/rum) to see if it speeds up complex queries and sorting by score.
 - Reimplement the `ts_headline` function for highlighting matches as the function is [broken](https://www.postgresql.org/message-id/flat/152461454026.19805.6310947081647212894%40wrigleys.postgresql.org).
 - Allow searching by English.
 - Allow selecting sources to search with.

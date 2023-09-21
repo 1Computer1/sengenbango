@@ -14,30 +14,21 @@ Every token in a Japanese sentence is converted into a basic lexeme and a part-o
 
 Full list of part-of-speech tags [here](https://www.unixuser.org/~euske/doc/postag/) under the ChaSen section.
 
-The function `query_from_json` can be used to create a query from a JSON-formatted expression tree. See [the initialization script](./01-init.sql) for expected format.
-
 Sample query:
 ```sql
-WITH
-query AS (
-  SELECT query_from_json(
-    'japanese',
-    '{"t":"And","c":[{"t":"Term","c":"その人"},{"t":"Tag","c":"動詞"}]}'::json
-  ) q
-),
+with
 matching AS (
-  SELECT *
-  FROM documents, query
-  WHERE textsearch_index_jp_col @@ query.q
-),
-limited AS (
-  SELECT source, jp, en, score
-  FROM matching
-  ORDER BY score DESC
-  LIMIT 200
+  select *
+  from documents
+  where textsearch_index_jp_col @@ (phraseto_tsquery('japanese', 'その人') <-> '＃動詞:*')
+  order by score <=> 0
+  limit 200
 )
-SELECT *
-FROM (SELECT DISTINCT ON(jp) * FROM limited) deduped
-ORDER BY score DESC
-LIMIT 100;
+select *
+from (select distinct on(jp) * from matching) deduped
+order by score desc
+limit 100;
 ```
+
+The `japanese` and `japanese_with_types` configurations always do not remove stop words.
+For English, use the `english_nostop` configuration to also not remove stop words.

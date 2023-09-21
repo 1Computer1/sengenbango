@@ -1,6 +1,7 @@
-use sqlx::{self, PgPool};
+use indoc::indoc;
+use sqlx::{self, PgPool, Postgres, QueryBuilder};
 
-#[derive(sqlx::FromRow, serde::Serialize, Debug)]
+#[derive(sqlx::FromRow, serde::Serialize)]
 pub struct Document {
     pub source: String,
     pub jp: String,
@@ -8,8 +9,39 @@ pub struct Document {
     pub score: f64,
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
-#[serde(tag = "t", content = "c")]
+#[derive(serde::Deserialize)]
+pub struct QueryWithConfig {
+    pub query: Query,
+    pub lang: Language,
+}
+
+#[derive(serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum Language {
+    English,
+    Japanese,
+}
+
+impl Language {
+    fn to_regconfig(&self) -> String {
+        use Language::*;
+        match self {
+            English => "english_nostop".to_string(),
+            Japanese => "japanese".to_string(),
+        }
+    }
+
+    fn to_col(&self) -> String {
+        use Language::*;
+        match self {
+            English => "textsearch_index_en_col".to_string(),
+            Japanese => "textsearch_index_jp_col".to_string(),
+        }
+    }
+}
+
+#[derive(serde::Deserialize)]
+#[serde(tag = "t", content = "c", rename_all = "snake_case")]
 pub enum Query {
     Term(String),
     Tag(String),
@@ -19,35 +51,101 @@ pub enum Query {
     Seq(Box<Query>, Box<Query>),
 }
 
-pub async fn query(pool: &PgPool, query: &Query) -> Result<Vec<Document>, anyhow::Error> {
-    let documents = sqlx::query_as(
-        r#"
-        WITH
-        query AS (
-            SELECT query_from_json(
-                'japanese',
-                $1::json
-            ) q
-        ),
+impl Query {
+    pub fn complexity(&self) -> usize {
+        use Query::*;
+        match self {
+            Term(_) => 1,
+            Tag(_) => 4,
+            Not(x) => 1 + x.complexity(),
+            And(x, y) => 1 + x.complexity() + y.complexity(),
+            Or(x, y) => 1 + x.complexity() + y.complexity(),
+            Seq(x, y) => x.complexity() + y.complexity(),
+        }
+    }
+}
+
+fn push_tsquery<'a>(query: &'a Query, lang: &'a Language, qb: &mut QueryBuilder<'a, Postgres>) {
+    use Query::*;
+    match query {
+        Term(x) => {
+            qb.push("phraseto_tsquery(");
+            qb.push_bind(lang.to_regconfig());
+            qb.push("::regconfig");
+            qb.push(",");
+            qb.push_bind(x);
+            qb.push(")");
+        }
+        Tag(x) => {
+            qb.push_bind(format!("＃{x}:*"));
+            qb.push("::tsquery");
+        }
+        Not(x) => {
+            qb.push("!!(");
+            push_tsquery(x, lang, qb);
+            qb.push(")");
+        }
+        And(x, y) => {
+            qb.push("(");
+            push_tsquery(x, lang, qb);
+            qb.push("&&");
+            push_tsquery(y, lang, qb);
+            qb.push(")");
+        }
+        Or(x, y) => {
+            qb.push("(");
+            push_tsquery(x, lang, qb);
+            qb.push("||");
+            push_tsquery(y, lang, qb);
+            qb.push(")");
+        }
+        Seq(x, y) => {
+            qb.push("(");
+            push_tsquery(x, lang, qb);
+            qb.push("<->");
+            push_tsquery(y, lang, qb);
+            qb.push(")");
+        }
+    }
+}
+
+fn build_numnodes(qwc: &QueryWithConfig) -> QueryBuilder<'_, Postgres> {
+    let mut qb = QueryBuilder::new("select numnode(");
+    push_tsquery(&qwc.query, &qwc.lang, &mut qb);
+    qb.push(")");
+    qb
+}
+
+fn build_query(qwc: &QueryWithConfig) -> QueryBuilder<'_, Postgres> {
+    let mut qb = QueryBuilder::new(indoc! {r#"
+        with
         matching AS (
-            SELECT *
-            FROM documents, query
-            WHERE textsearch_index_jp_col @@ query.q
-        ),
-        limited AS (
-            SELECT source, jp, en, score
-            FROM matching
-            ORDER BY score DESC
-            LIMIT 200
+            select *
+            from documents
+            where "#});
+    qb.push(qwc.lang.to_col());
+    qb.push(" @@ (");
+    push_tsquery(&qwc.query, &qwc.lang, &mut qb);
+    qb.push(")");
+    qb.push(indoc! {r#"
+            order by score <=> 0
+            limit 200
         )
-        SELECT *
-        FROM (SELECT DISTINCT ON(jp) * FROM limited) deduped
-        ORDER BY score DESC
-        LIMIT 100;
-        "#,
-    )
-    .bind(serde_json::to_string(&query)?)
-    .fetch_all(pool)
-    .await?;
+        select *
+        from (select distinct on(jp) * from matching) deduped
+        order by score desc
+        limit 100;"#});
+    qb
+}
+
+pub async fn numnodes(pool: &PgPool, qwc: &QueryWithConfig) -> Result<i32, anyhow::Error> {
+    let mut qb = build_numnodes(qwc);
+    let numnodes: i32 = qb.build_query_scalar().fetch_one(pool).await?;
+    Ok(numnodes)
+}
+
+pub async fn query(pool: &PgPool, qwc: &QueryWithConfig) -> Result<Vec<Document>, anyhow::Error> {
+    let mut qb = build_query(qwc);
+    let documents = qb.build_query_as().fetch_all(pool).await?;
     Ok(documents)
 }

@@ -1,24 +1,23 @@
 use axum::{
+    error_handling::HandleErrorLayer,
     extract::{self, State},
     http::StatusCode,
     routing::post,
-    Json, Router,
+    BoxError, Json, Router,
 };
-use data::{Document, Query};
+use data::{Document, QueryWithConfig};
 use sqlx::{postgres::PgPoolOptions, PgPool};
-use std::env;
 use std::net::SocketAddr;
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+use std::{env, time::Duration};
+use tower::{buffer::BufferLayer, limit::RateLimitLayer, ServiceBuilder};
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
 mod data;
 
 #[tokio::main]
 async fn main() {
     tracing_subscriber::registry()
-        .with(
-            tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "example_tokio_postgres=debug".into()),
-        )
+        .with(EnvFilter::from_default_env())
         .with(tracing_subscriber::fmt::layer())
         .init();
 
@@ -27,8 +26,17 @@ async fn main() {
         .and_then(|x| str::parse(&x).ok())
         .unwrap_or(3000);
 
-    let db_str = std::env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "postgresql://postgres:aikotoba@db:5432".to_string());
+    let db_str = std::env::var("SGBG_DB").expect("database url SGBG_DB not specified");
+
+    let rate_num = std::env::var("SGBG_RATE_NUM")
+        .ok()
+        .and_then(|x| str::parse(&x).ok())
+        .unwrap_or(3);
+
+    let rate_per = std::env::var("SGBG_RATE_PER")
+        .ok()
+        .and_then(|x| str::parse(&x).ok())
+        .unwrap_or(6);
 
     let pool = PgPoolOptions::new()
         .connect(&db_str)
@@ -37,7 +45,18 @@ async fn main() {
 
     let app = Router::new()
         .route("/v1/query", post(query))
-        .with_state(pool);
+        .with_state(pool)
+        .layer(
+            ServiceBuilder::new()
+                .layer(HandleErrorLayer::new(|err: BoxError| async move {
+                    (
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        format!("Unhandled error: {}", err),
+                    )
+                }))
+                .layer(BufferLayer::new(1024))
+                .layer(RateLimitLayer::new(rate_num, Duration::from_secs(rate_per))),
+        );
 
     let addr = SocketAddr::from(([0, 0, 0, 0], port));
     tracing::info!("listening on {addr}");
@@ -47,14 +66,42 @@ async fn main() {
         .unwrap();
 }
 
+enum QueryError {
+    TooComplex,
+    NotMeaningful,
+}
+
+impl QueryError {
+    fn to_msg(&self) -> String {
+        use QueryError::*;
+        match self {
+            TooComplex => "Query is too complex".to_string(),
+            NotMeaningful => "Query does not have any meaningful search terms".to_string(),
+        }
+    }
+}
+
 async fn query(
     State(pool): State<PgPool>,
-    extract::Json(payload): extract::Json<Query>,
+    extract::Json(payload): extract::Json<QueryWithConfig>,
 ) -> Result<Json<Vec<Document>>, (StatusCode, String)> {
+    if payload.query.complexity() > 10 {
+        return Err(unprocessable_error(QueryError::TooComplex));
+    }
+    let numnodes = data::numnodes(&pool, &payload)
+        .await
+        .map_err(internal_error)?;
+    if numnodes == 0 {
+        return Err(unprocessable_error(QueryError::NotMeaningful));
+    }
     data::query(&pool, &payload)
         .await
         .map(Json)
         .map_err(internal_error)
+}
+
+fn unprocessable_error(error: QueryError) -> (StatusCode, String) {
+    (StatusCode::UNPROCESSABLE_ENTITY, error.to_msg())
 }
 
 fn internal_error(err: anyhow::Error) -> (StatusCode, String) {
