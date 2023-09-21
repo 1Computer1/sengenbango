@@ -1,13 +1,14 @@
 import { EmbeddedActionsParser, Lexer, ParserMethod, createToken } from 'chevrotain';
 
-export type QueryKind = 'Term' | 'Tag' | 'Not' | 'And' | 'Or' | 'Seq';
-export type Query =
-	| { t: 'Term'; c: string }
-	| { t: 'Tag'; c: string }
-	| { t: 'Not'; c: Query }
-	| { t: 'And'; c: [Query, Query] }
-	| { t: 'Or'; c: [Query, Query] }
-	| { t: 'Seq'; c: [Query, Query] };
+export type QueryKind = 'term' | 'tag' | 'not' | 'and' | 'or' | 'seq';
+export type Query = { t: QueryKind } & (
+	| { t: 'term'; c: string }
+	| { t: 'tag'; c: string }
+	| { t: 'not'; c: Query }
+	| { t: 'and'; c: [Query, Query] }
+	| { t: 'or'; c: [Query, Query] }
+	| { t: 'seq'; c: [Query, Query] }
+);
 
 export function parseQuery(input: string): Query {
 	const r = lexer.tokenize(input);
@@ -93,7 +94,7 @@ class Parser extends EmbeddedActionsParser {
 			this.MANY(() => {
 				this.CONSUME(PIPE);
 				const y = this.SUBRULE2(this.pand);
-				x = { t: 'Or', c: [x, y] };
+				x = { t: 'or', c: [x, y] };
 			});
 			return x;
 		});
@@ -103,7 +104,7 @@ class Parser extends EmbeddedActionsParser {
 			this.MANY(() => {
 				this.CONSUME(AND);
 				const y = this.SUBRULE2(this.pseq);
-				x = { t: 'And', c: [x, y] };
+				x = { t: 'and', c: [x, y] };
 			});
 			return x;
 		});
@@ -112,7 +113,7 @@ class Parser extends EmbeddedActionsParser {
 			let x = this.SUBRULE3(this.punit);
 			this.MANY(() => {
 				const y = this.SUBRULE4(this.punit);
-				x = { t: 'Seq', c: [x, y] };
+				x = { t: 'seq', c: [x, y] };
 			});
 			return x;
 		});
@@ -124,7 +125,7 @@ class Parser extends EmbeddedActionsParser {
 		this.RULE('pnot', (): Query => {
 			this.CONSUME(MINUS);
 			const c = this.SUBRULE2(this.patom);
-			return { t: 'Not', c };
+			return { t: 'not', c };
 		});
 
 		this.RULE('patom', (): Query => {
@@ -146,12 +147,12 @@ class Parser extends EmbeddedActionsParser {
 			this.CONSUME(LB);
 			const term = this.CONSUME1(TERM);
 			this.CONSUME(RB);
-			return { t: 'Tag', c: term.image.replace(/\./g, '・') };
+			return { t: 'tag', c: term.image.replace(/\./g, '・') };
 		});
 
 		this.RULE('pterm', (): Query => {
 			const term = this.CONSUME2(TERM);
-			return { t: 'Term', c: term.image };
+			return { t: 'term', c: term.image };
 		});
 
 		this.performSelfAnalysis();

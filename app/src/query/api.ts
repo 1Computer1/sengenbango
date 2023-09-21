@@ -7,12 +7,16 @@ export interface ParallelDocument {
 	score: number;
 }
 
-export function queryDocuments(query: Query): Promise<ParallelDocument[]> {
-	return fetch('/api/v1/query', {
+export async function queryDocuments(query: Query, lang: 'english' | 'japanese'): Promise<ParallelDocument[]> {
+	const r = await fetch('/api/v1/query', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify(query),
-	}).then((r) => r.json());
+		body: JSON.stringify({
+			lang,
+			query,
+		}),
+	});
+	return await r.json();
 }

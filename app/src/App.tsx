@@ -16,7 +16,7 @@ function App() {
 					onSubmit={async (text) => {
 						// const r = sample;
 						const q = parseQuery(text);
-						const r = await queryDocuments(q);
+						const r = await queryDocuments(q, 'japanese');
 						setResults(r);
 					}}
 				/>
