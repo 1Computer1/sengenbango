@@ -14,6 +14,12 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilte
 
 mod data;
 
+#[derive(Clone)]
+struct ApiState {
+    pool: PgPool,
+    max_complexity: usize,
+}
+
 #[tokio::main]
 async fn main() {
     tracing_subscriber::registry()
@@ -38,6 +44,11 @@ async fn main() {
         .and_then(|x| str::parse(&x).ok())
         .unwrap_or(6);
 
+    let max_complexity = std::env::var("SGBG_COMPLEX")
+        .ok()
+        .and_then(|x| str::parse(&x).ok())
+        .unwrap_or(10);
+
     let pool = PgPoolOptions::new()
         .connect(&db_str)
         .await
@@ -45,7 +56,10 @@ async fn main() {
 
     let app = Router::new()
         .route("/v1/query", post(query))
-        .with_state(pool)
+        .with_state(ApiState {
+            pool,
+            max_complexity,
+        })
         .layer(
             ServiceBuilder::new()
                 .layer(HandleErrorLayer::new(|err: BoxError| async move {
@@ -82,19 +96,19 @@ impl QueryError {
 }
 
 async fn query(
-    State(pool): State<PgPool>,
+    State(state): State<ApiState>,
     extract::Json(payload): extract::Json<QueryWithConfig>,
 ) -> Result<Json<Vec<Document>>, (StatusCode, String)> {
-    if payload.query.complexity() > 10 {
+    if payload.query.complexity() > state.max_complexity {
         return Err(unprocessable_error(QueryError::TooComplex));
     }
-    let numnodes = data::numnodes(&pool, &payload)
+    let numnodes = data::numnodes(&state.pool, &payload)
         .await
         .map_err(internal_error)?;
     if numnodes == 0 {
         return Err(unprocessable_error(QueryError::NotMeaningful));
     }
-    data::query(&pool, &payload)
+    data::query(&state.pool, &payload)
         .await
         .map(Json)
         .map_err(internal_error)

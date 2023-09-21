@@ -29,6 +29,7 @@ services:
       SGBG_DB: 'postgresql://postgres:aikotoba@db:5432'
       SGBG_RATE_NUM: 3
       SGBG_RATE_PER: 6
+      SGBG_COMPLEX: 10
     depends_on:
       - db
 
