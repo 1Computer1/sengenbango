@@ -24,7 +24,7 @@ with
 matching AS (
   select *
   from documents
-  where textsearch_index_jp_col @@ (phraseto_tsquery('japanese', 'その人') <-> '＃動詞:*')
+  where textsearch_index_jp_col @@ (phraseto_tsquery('japanese', 'その人') && '＃動詞:*')
   order by score <=> 0
   limit 200
 )

@@ -1,6 +1,6 @@
 # 千言万語
 
-Parallel JP-EN corpora search combining multiple corpora. See [here](data/README.md) for credits for data sources.
+Parallel JP-EN corpora search combining multiple corpora. See [here](data/SOURCES.md) for credits for data sources.
 
 ## Instructions
 
