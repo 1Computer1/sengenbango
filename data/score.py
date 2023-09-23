@@ -102,8 +102,8 @@ def main():
     else:
         raise ValueError('invalid model name.')
 
-    with open(pathlib.Path(args['folder'], 'output/' + args.source + '.csv'), 'r', encoding='utf-8', newline='') as fin, \
-        open(pathlib.Path(args['folder'], 'scored/' + args.source + '.csv'), 'w', encoding='utf-8', newline='') as fout:
+    with open(pathlib.Path(args.folder, 'output/' + args.source + '.csv'), 'r', encoding='utf-8', newline='') as fin, \
+        open(pathlib.Path(args.folder, 'scored/' + args.source + '.csv'), 'w', encoding='utf-8', newline='') as fout:
         reader = csv.reader(fin, dialect='unix')
         writer = csv.writer(fout, dialect='unix')
 
