@@ -6,7 +6,7 @@ We use a modified version of [textsearch_ja](https://www.postgresql.org/ftp/proj
 
 Instructions for setting this up was adapted from https://stackoverflow.com/a/76150756/10499803.
 
-Also, we use the [RUM index](https://github.com/postgrespro/rum) for faster querying.
+<!-- Also, we use the [RUM index](https://github.com/postgrespro/rum) for faster querying. -->
 
 ## Querying
 
@@ -21,11 +21,11 @@ Full list of part-of-speech tags [here](https://www.unixuser.org/~euske/doc/post
 Sample query:
 ```sql
 with
-matching AS (
+matching as (
   select *
   from documents
   where textsearch_index_jp_col @@ (phraseto_tsquery('japanese', 'その人') && '＃動詞:*')
-  order by score <=> 0
+  order by score
   limit 200
 )
 select *

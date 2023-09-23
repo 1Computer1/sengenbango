@@ -1,4 +1,4 @@
-create extension rum;
+-- create extension rum;
 
 create table documents (
     source text not null,
@@ -39,8 +39,14 @@ copy documents (source, name, score, jp, en) from '/data/wordnet_def.csv' csv de
 copy documents (source, name, score, jp, en) from '/data/bpersona_en_ja.csv' csv delimiter ',';
 copy documents (source, name, score, jp, en) from '/data/natcom.csv' csv delimiter ',';
 
-create index textsearch_index_jp on documents using rum (textsearch_index_jp_col rum_tsvector_addon_ops, score)
-    with (attach = 'score', to = 'textsearch_index_jp_col');
+-- create index textsearch_index_jp on documents using rum (textsearch_index_jp_col rum_tsvector_addon_ops, score)
+--     with (attach = 'score', to = 'textsearch_index_jp_col');
 
-create index textsearch_index_en on documents using rum (textsearch_index_en_col rum_tsvector_addon_ops, score)
-    with (attach = 'score', to = 'textsearch_index_en_col');
+-- create index textsearch_index_en on documents using rum (textsearch_index_en_col rum_tsvector_addon_ops, score)
+--     with (attach = 'score', to = 'textsearch_index_en_col');
+
+create index textsearch_index_jp on documents using gin (textsearch_index_jp_col);
+
+create index textsearch_index_en on documents using gin (textsearch_index_en_col);
+
+create index score_index on documents using btree (score desc);
