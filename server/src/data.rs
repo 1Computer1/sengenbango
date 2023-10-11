@@ -13,9 +13,11 @@ pub struct Document {
 pub struct QueryWithConfig {
     pub query: Query,
     pub lang: Language,
+    #[serde(default = "all_sources")]
+    pub sources: Vec<Source>,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Clone, Copy)]
 #[serde(rename_all = "snake_case")]
 pub enum Language {
     English,
@@ -23,7 +25,7 @@ pub enum Language {
 }
 
 impl Language {
-    fn to_regconfig(&self) -> String {
+    fn to_regconfig(self) -> String {
         use Language::*;
         match self {
             English => "english_nostop".to_string(),
@@ -31,13 +33,66 @@ impl Language {
         }
     }
 
-    fn to_col(&self) -> String {
+    fn to_col(self) -> String {
         use Language::*;
         match self {
             English => "textsearch_index_en_col".to_string(),
             Japanese => "textsearch_index_jp_col".to_string(),
         }
     }
+}
+
+#[derive(serde::Deserialize, serde::Serialize, Clone, Copy)]
+#[serde(rename_all = "kebab-case")]
+pub enum Source {
+    Basics,
+    BpersonaEnJa,
+    BpersonaJaEn,
+    Coursera,
+    Jparacrawl,
+    Kyoto,
+    Legal,
+    Natcom,
+    Novels,
+    Reuters,
+    Tatoeba,
+    WordnetDef,
+    WordnetExe,
+}
+
+impl Source {
+    fn to_source(self) -> String {
+        serde_json::to_string(&self)
+            .unwrap()
+            .strip_prefix('"')
+            .unwrap()
+            .strip_suffix('"')
+            .unwrap()
+            .to_string()
+    }
+}
+
+static ALL_SOURCES: [Source; 13] = {
+    use Source::*;
+    [
+        Basics,
+        BpersonaEnJa,
+        BpersonaJaEn,
+        Coursera,
+        Jparacrawl,
+        Kyoto,
+        Legal,
+        Natcom,
+        Novels,
+        Reuters,
+        Tatoeba,
+        WordnetDef,
+        WordnetExe,
+    ]
+};
+
+fn all_sources() -> Vec<Source> {
+    ALL_SOURCES.to_vec()
 }
 
 #[derive(serde::Deserialize)]
@@ -127,8 +182,16 @@ fn build_query(qwc: &QueryWithConfig) -> QueryBuilder<'_, Postgres> {
     qb.push(" @@ (");
     push_tsquery(&qwc.query, &qwc.lang, &mut qb);
     qb.push(")");
+    qb.push("and source = any(");
+    qb.push_bind(
+        qwc.sources
+            .iter()
+            .map(|s| s.to_source())
+            .collect::<Vec<_>>(),
+    );
+    qb.push(")");
     qb.push(indoc! {r#"
-            order by score <=> 0
+            order by score
             limit 200
         )
         select *

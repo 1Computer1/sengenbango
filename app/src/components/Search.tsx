@@ -8,7 +8,7 @@ export function Search({ ...props }: SearchBarProps) {
 		<SearchField aria-label="Search" {...props}>
 			{({ isEmpty }) => (
 				<div className="grid grid-areas-[input_clear_submit_help] grid-cols-[1fr,auto]">
-					<Input className="grid-in-[input] border border-gray-300 rounded-md p-2 pr-10 text-2xl" />
+					<Input className="grid-in-[input] border border-gray-300 rounded-md p-2 pr-10 lg:text-2xl" />
 					{!isEmpty && (
 						<Button className="grid-in-[clear] rounded-full -ml-8">
 							<FaX />

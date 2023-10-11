@@ -1,7 +1,7 @@
 use axum::{
     error_handling::HandleErrorLayer,
     extract::{self, State},
-    http::StatusCode,
+    http::{Method, StatusCode},
     routing::post,
     BoxError, Json, Router,
 };
@@ -10,6 +10,7 @@ use sqlx::{postgres::PgPoolOptions, PgPool};
 use std::net::SocketAddr;
 use std::{env, time::Duration};
 use tower::{buffer::BufferLayer, limit::RateLimitLayer, ServiceBuilder};
+use tower_http::cors::{Any, CorsLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
 mod data;
@@ -60,6 +61,13 @@ async fn main() {
             pool,
             max_complexity,
         })
+        .layer(
+            CorsLayer::new()
+                .allow_methods(vec![Method::GET, Method::POST, Method::OPTIONS])
+                .allow_origin(Any)
+                .allow_headers(Any)
+                .allow_credentials(false),
+        )
         .layer(
             ServiceBuilder::new()
                 .layer(HandleErrorLayer::new(|err: BoxError| async move {

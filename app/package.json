@@ -12,11 +12,12 @@
 	"dependencies": {
 		"chevrotain": "^11.0.3",
 		"clsx": "^2.0.0",
+		"immer": "^10.0.3",
 		"react": "^18.2.0",
 		"react-aria-components": "^1.0.0-beta.0",
 		"react-dom": "^18.2.0",
 		"react-icons": "^4.11.0",
-		"swr": "^2.2.2"
+		"use-immer": "^0.9.0"
 	},
 	"devDependencies": {
 		"@savvywombat/tailwindcss-grid-areas": "^3.1.0",

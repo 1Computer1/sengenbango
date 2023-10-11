@@ -1,0 +1,35 @@
+# This configuration is for use with `npm run dev` when working on the frontend.
+
+version: '3.8'
+
+services:
+  db:
+    build: ./database
+    environment:
+      POSTGRES_PASSWORD: aikotoba
+    ports:
+      - 5432:5432
+    volumes:
+      - ./data/scored:/data
+      # - ./data/output:/data
+      - ./postgresdata:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+
+  server:
+    build: ./server
+    environment:
+      RUST_LOG: INFO
+      SGBG_PORT: 3000
+      SGBG_DB: 'postgresql://postgres:aikotoba@db:5432'
+      SGBG_RATE_NUM: 3
+      SGBG_RATE_PER: 6
+      SGBG_COMPLEX: 10
+    ports:
+      - 3000:3000
+    depends_on:
+      - db

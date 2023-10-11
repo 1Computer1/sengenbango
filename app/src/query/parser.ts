@@ -1,6 +1,7 @@
-import { EmbeddedActionsParser, Lexer, ParserMethod, createToken } from 'chevrotain';
+import { EmbeddedActionsParser, IRecognitionException, Lexer, ParserMethod, createToken } from 'chevrotain';
 
 export type QueryKind = 'term' | 'tag' | 'not' | 'and' | 'or' | 'seq';
+
 export type Query = { t: QueryKind } & (
 	| { t: 'term'; c: string }
 	| { t: 'tag'; c: string }
@@ -10,14 +11,16 @@ export type Query = { t: QueryKind } & (
 	| { t: 'seq'; c: [Query, Query] }
 );
 
-export function parseQuery(input: string): Query {
+export type Result<A, B> = { ok: true; value: A } | { ok: false; error: B };
+
+export function parseQuery(input: string): Result<Query, IRecognitionException[]> {
 	const r = lexer.tokenize(input);
 	parser.input = r.tokens;
 	const res = parser.pexpr();
 	if (parser.errors.length) {
-		throw new Error(parser.errors.join(', '));
+		return { ok: false, error: parser.errors };
 	}
-	return res;
+	return { ok: true, value: res };
 }
 
 const WS = createToken({

@@ -12,7 +12,7 @@ Instructions for setting this up was adapted from https://stackoverflow.com/a/76
 
 Every token in a Japanese sentence is converted into a basic lexeme and a part-of-speech lexeme in a `ts_vector` when using the `japanese_with_types` language configuration:
 | Format           | Input | Output        |
-| ------           | ----- | ------        |
+| ---------------- | ----- | ------------- |
 | `basic`          | `話せ` | `話す`        |
 | `＃type・s1・s2・s3` | `早い` | `＃形容詞・自立` |
 

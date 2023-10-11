@@ -17,10 +17,16 @@ All routes are prefixed by the API version. Right now, there is only `v1`, so e.
 
 Body should be a JSON object with entries:
 
-- `language` - Either `japanese` or `english`.
-- `query` - A query object, which is an expression tree tagged by a tag `t` and with content `c`.
-The tag is one of `term`, `tag`, `not`, `and`, `or`, `seq`.
-For `term`, `tag`, the content is a string; for `not`, the content is a query object; for `and`, `or`, `seq`, the content is a pair of query objects.
+| Field      | Type       | Notes                                                                                 |
+| ---------- | ---------- | ------------------------------------------------------------------------------------- |
+| `language` | `string`   | Either `japanese` or `english`.                                                       |
+| `query`    | `object`   | A query object, which is an expression tree tagged by a tag `t` and with content `c`. |
+| `sources?` | `string[]` | Array of sources to use, or leave this unset for all sources.                         |
 
-If the query is too complex or does not contain lexemes, a `422` is returned.
-Complexity is measured as the number of terms, `not`s, `and`s, `or`s, and 4 times the number of tags.
+
+For query objects:
+- The tag is one of `term`, `tag`, `not`, `and`, `or`, `seq`.
+    - For `term`, `tag`, the content is a string.
+    - For `not`, the content is a query object.
+    - For `and`, `or`, `seq`, the content is a pair of query objects.
+-  If the query is too complex or does not contain lexemes, a `422` is returned. Complexity is measured as the number of terms, `not`s, `and`s, `or`s, and 4 times the number of part-of-speech tags.
