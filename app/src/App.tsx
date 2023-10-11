@@ -48,7 +48,7 @@ function App() {
 					/>
 				</div>
 				{results && results.length ? (
-					<ol className="flex flex-col gap-1.5 w-2/3">
+					<ol className="flex flex-col gap-1.5 w-full lg:w-2/3">
 						{results.map((pdoc) => (
 							<li key={pdoc.en + ' ' + pdoc.jp}>
 								<SearchResult pdoc={pdoc} />

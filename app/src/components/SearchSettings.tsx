@@ -9,7 +9,7 @@ import {
 	Modal,
 	ModalOverlay,
 } from 'react-aria-components';
-import { FaCheckDouble, FaGear, FaSquare, FaSquareCheck, FaStar, FaX, FaXmark } from 'react-icons/fa6';
+import { FaCheckDouble, FaGear, FaRegSquare, FaRegSquareCheck, FaStar, FaX, FaXmark } from 'react-icons/fa6';
 import { AllSources, RecommendedSources, Settings, Source } from '../query/api';
 import { produce } from 'immer';
 import { LanguageSwitch } from './LanguageSwitch';
@@ -27,9 +27,9 @@ export function SearchSettings({ value, onChange }: SearchSettingsProps) {
 			</Button>
 			<ModalOverlay
 				isDismissable
-				className="fixed inset-0 p-12 w-screen h-screen bg-black bg-opacity-20 flex justify-center items-center"
+				className="fixed inset-0 p-6 w-screen h-screen bg-black bg-opacity-20 flex justify-center items-center"
 			>
-				<Modal className="bg-white w-full lg:w-1/2 border border-gray-300 rounded-md p-6">
+				<Modal className="bg-white w-full lg:w-1/2 border border-gray-300 rounded-md p-4">
 					<Dialog className="z-10">
 						{({ close }) => (
 							<div className="flex flex-col gap-2">
@@ -119,7 +119,7 @@ export function SearchSettings({ value, onChange }: SearchSettingsProps) {
 													<Checkbox key={source} value={source} className="flex flex-row items-center gap-1">
 														{({ isSelected }) => (
 															<>
-																{isSelected ? <FaSquareCheck /> : <FaSquare />}
+																{isSelected ? <FaRegSquareCheck /> : <FaRegSquare />}
 																{source}
 															</>
 														)}
