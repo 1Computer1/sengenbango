@@ -5,6 +5,8 @@ import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
-		<App />
+		<div className="w-screen h-screen" style={{ scrollbarGutter: 'stable both-edges' }}>
+			<App />
+		</div>
 	</React.StrictMode>,
 );
