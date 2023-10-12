@@ -164,10 +164,10 @@ fn push_tsquery<'a>(query: &'a Query, lang: &'a Language, qb: &mut QueryBuilder<
     }
 }
 
-fn build_numnodes(qwc: &QueryWithConfig) -> QueryBuilder<'_, Postgres> {
-    let mut qb = QueryBuilder::new("select numnode(");
+fn build_has_querytree(qwc: &QueryWithConfig) -> QueryBuilder<'_, Postgres> {
+    let mut qb = QueryBuilder::new("select querytree(");
     push_tsquery(&qwc.query, &qwc.lang, &mut qb);
-    qb.push(")");
+    qb.push(") <> 'T'");
     qb
 }
 
@@ -201,10 +201,10 @@ fn build_query(qwc: &QueryWithConfig) -> QueryBuilder<'_, Postgres> {
     qb
 }
 
-pub async fn numnodes(pool: &PgPool, qwc: &QueryWithConfig) -> Result<i32, anyhow::Error> {
-    let mut qb = build_numnodes(qwc);
-    let numnodes: i32 = qb.build_query_scalar().fetch_one(pool).await?;
-    Ok(numnodes)
+pub async fn has_querytree(pool: &PgPool, qwc: &QueryWithConfig) -> Result<bool, anyhow::Error> {
+    let mut qb: QueryBuilder<'_, Postgres> = build_has_querytree(qwc);
+    let b: bool = qb.build_query_scalar().fetch_one(pool).await?;
+    Ok(b)
 }
 
 pub async fn query(pool: &PgPool, qwc: &QueryWithConfig) -> Result<Vec<Document>, anyhow::Error> {

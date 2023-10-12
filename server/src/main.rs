@@ -110,10 +110,10 @@ async fn query(
     if payload.query.complexity() > state.max_complexity {
         return Err(unprocessable_error(QueryError::TooComplex));
     }
-    let numnodes = data::numnodes(&state.pool, &payload)
+    let has_querytree = data::has_querytree(&state.pool, &payload)
         .await
         .map_err(internal_error)?;
-    if numnodes == 0 {
+    if !has_querytree {
         return Err(unprocessable_error(QueryError::NotMeaningful));
     }
     data::query(&state.pool, &payload)
