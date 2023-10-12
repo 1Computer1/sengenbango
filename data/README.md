@@ -15,4 +15,4 @@ The `all.py` script can be used when all the raw data are set.
 
 After that, we score the data using [gpt2-japanese](https://github.com/tanreinama/gpt2-japanese), which is already included as a submodule and dependencies added in the parent folder. Follow setup instructions in their repository for the model file. Then, run `score.py --model <model> --exclude-end <source>` to get a scored CSV.
 
-Scored sentences from `data/scored` are then copied into the [database](../docker/postgres-mecab/README.md).
+Scored sentences from `data/scored` are then copied into the database.
