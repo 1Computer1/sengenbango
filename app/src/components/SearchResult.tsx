@@ -8,7 +8,7 @@ export interface SearchResultProps {
 
 export function SearchResult({ pdoc: { source, jp, en, score } }: SearchResultProps) {
 	return (
-		<div className="flex flex-col border border-gray-300 rounded-md p-2 gap-0.5">
+		<div className="flex flex-col border border-gray-300 dark:border-gray-600 rounded-md p-2 gap-0.5">
 			<Text>{jp}</Text>
 			<Text className="text-sm">{en}</Text>
 			<div className="flex flex-row justify-between items-end">

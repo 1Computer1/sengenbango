@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { Search } from './components/Search';
 import { Result, parseQuery } from './query/parser';
-import { DefaultSettings, QueryResponse, Settings, queryDocuments } from './query/api';
+import { DefaultSettings, QueryResponse, QuerySettings, queryDocuments } from './query/api';
 import { SearchResult } from './components/SearchResult';
-import { SearchSettings } from './components/SearchSettings';
+import { Settings } from './components/Settings';
 import { produce } from 'immer';
 import { LanguageSwitch } from './components/LanguageSwitch';
 
 function App() {
-	const [settings, setSettings] = useState<Settings>(DefaultSettings);
+	const [settings, setSettings] = useState<QuerySettings>(DefaultSettings);
 	const [results, setResults] = useState<Result<QueryResponse, string> | null>(null);
 	const [isChanged, setIsChanged] = useState(false);
 
@@ -38,7 +38,7 @@ function App() {
 					}}
 				/>
 				<div className="flex flex-row items-center gap-4">
-					<SearchSettings
+					<Settings
 						value={settings}
 						onChange={(t) => {
 							setSettings(t);

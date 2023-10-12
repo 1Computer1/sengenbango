@@ -10,7 +10,7 @@ export function Search({ searchDone, ...props }: SearchBarProps) {
 		<SearchField aria-label="Search" {...props}>
 			{({ isEmpty }) => (
 				<div className="grid grid-areas-[input_done_clear] grid-cols-[1fr,auto,auto] items-center">
-					<Input className="grid-in-[input] border border-gray-300 rounded-md p-2 pr-20 lg:text-2xl" />
+					<Input className="grid-in-[input] border border-gray-300 dark:border-gray-600 dark:bg-zinc-900 rounded-md p-2 pr-20 lg:text-2xl" />
 					{searchDone && (
 						<div className="grid-in-[done] rounded-full -ml-16 z-10 text-green-600">
 							<FaCheck />

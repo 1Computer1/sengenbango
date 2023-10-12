@@ -29,7 +29,7 @@ export type Source =
 	| 'wordnet-def'
 	| 'wordnet-exe';
 
-export type Settings = {
+export type QuerySettings = {
 	lang: Language;
 	sources: Source[];
 };
@@ -61,12 +61,12 @@ export const AllSources: Source[] = [
 	'wordnet-exe',
 ];
 
-export const DefaultSettings: Settings = {
+export const DefaultSettings: QuerySettings = {
 	lang: 'japanese',
 	sources: RecommendedSources,
 };
 
-export async function queryDocuments(query: Query, settings: Settings): Promise<Result<QueryResponse, string>> {
+export async function queryDocuments(query: Query, settings: QuerySettings): Promise<Result<QueryResponse, string>> {
 	const r = await fetch(import.meta.env.VITE_API_URL + '/v1/query', {
 		method: 'POST',
 		headers: {
