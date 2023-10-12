@@ -5,7 +5,7 @@ import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
-		<div className="w-screen h-screen" style={{ scrollbarGutter: 'stable both-edges' }}>
+		<div className="overflow-y-scroll h-screen" style={{ scrollbarGutter: 'stable' }}>
 			<App />
 		</div>
 	</React.StrictMode>,
