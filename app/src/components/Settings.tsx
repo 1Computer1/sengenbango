@@ -42,7 +42,7 @@ export function Settings({ value, onChange }: SettingsProps) {
 				isDismissable
 				className="fixed inset-0 p-6 w-screen h-screen bg-black bg-opacity-20 flex justify-center items-center dark:"
 			>
-				<Modal className="bg-white dark:bg-zinc-900 dark:text-gray-300 w-full lg:w-1/2 border border-gray-300 dark:border-gray-600 rounded-md p-4">
+				<Modal className="bg-white dark:bg-zinc-900 dark:text-gray-300 w-full lg:w-1/2 max-h-full overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-md p-4">
 					<Dialog className="z-10">
 						{({ close }) => (
 							<div className="flex flex-col gap-2">

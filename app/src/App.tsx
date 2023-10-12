@@ -4,6 +4,7 @@ import { Result, parseQuery } from './query/parser';
 import { DefaultSettings, QueryResponse, QuerySettings, queryDocuments } from './query/api';
 import { SearchResult } from './components/SearchResult';
 import { Settings } from './components/Settings';
+import { Help } from './components/Help';
 
 function App() {
 	const [settings, setSettings] = useState<QuerySettings>(DefaultSettings);
@@ -41,6 +42,7 @@ function App() {
 					}}
 				/>
 				<div className="flex flex-row items-center gap-4">
+					<Help />
 					<Settings
 						value={settings}
 						onChange={(t) => {
