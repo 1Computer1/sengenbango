@@ -5,11 +5,8 @@ import {
 	Dialog,
 	DialogTrigger,
 	Heading,
-	Label,
 	Modal,
 	ModalOverlay,
-	Radio,
-	RadioGroup,
 } from 'react-aria-components';
 import {
 	FaCheckDouble,
@@ -23,12 +20,10 @@ import {
 	FaX,
 	FaXmark,
 } from 'react-icons/fa6';
-import { flushSync } from 'react-dom';
 import { AllSources, RecommendedSources, QuerySettings, Source } from '../query/api';
 import { produce } from 'immer';
-import useLocalStorage from '../hooks/useLocalStorage';
-import { updateTheme } from '../util/theme';
 import clsx from 'clsx';
+import { useTheme } from '../hooks/useTheme';
 
 export interface SettingsProps {
 	value: QuerySettings;
@@ -36,7 +31,7 @@ export interface SettingsProps {
 }
 
 export function Settings({ value, onChange }: SettingsProps) {
-	const [theme, setTheme] = useLocalStorage('theme');
+	const [theme, setTheme] = useTheme();
 
 	return (
 		<DialogTrigger>
@@ -52,7 +47,7 @@ export function Settings({ value, onChange }: SettingsProps) {
 						{({ close }) => (
 							<div className="flex flex-col gap-2">
 								<div className="flex flex-row justify-between items-center">
-									<Heading level={1} className="text-xl font-bold">
+									<Heading level={1} className="text-2xl font-bold">
 										Settings
 									</Heading>
 									<Button onPress={close}>
@@ -60,35 +55,39 @@ export function Settings({ value, onChange }: SettingsProps) {
 									</Button>
 								</div>
 								<div className="flex flex-col gap-2">
-									<Heading level={2} className="text-lg font-bold">
+									<Heading level={2} className="text-xl font-bold">
 										Theme
 									</Heading>
-									<div>
-										<RadioGroup
-											value={theme ?? ''}
-											onChange={(t) => {
-												flushSync(() => {
-													setTheme(t || null);
-												});
-												updateTheme();
-											}}
-											className="flex flex-row items-center gap-2"
+									<div className="flex flex-row items-center gap-2">
+										<Button
+											onPress={() => setTheme('dark')}
+											className={({ isFocusVisible }) =>
+												clsx('flex flex-row items-center gap-1 rounded-sm', isFocusVisible && 'ring')
+											}
 										>
-											<Radio value="dark" className="flex flex-row items-center gap-1">
-												<FaMoon />
-												<span className={clsx(theme === 'dark' && 'underline')}>Dark</span>
-											</Radio>
-											<Radio value="light" className="flex flex-row items-center gap-1">
-												<FaSun />
-												<span className={clsx(theme === 'light' && 'underline')}>Light</span>
-											</Radio>
-											<Radio value="" className="flex flex-row items-center gap-1">
-												<FaComputer />
-												<span className={clsx(theme === null && 'underline')}>System</span>
-											</Radio>
-										</RadioGroup>
+											<FaMoon />
+											<span className={clsx(theme === 'dark' && 'underline')}>Dark</span>
+										</Button>
+										<Button
+											onPress={() => setTheme('light')}
+											className={({ isFocusVisible }) =>
+												clsx('flex flex-row items-center gap-1 rounded-sm', isFocusVisible && 'ring')
+											}
+										>
+											<FaSun />
+											<span className={clsx(theme === 'light' && 'underline')}>Light</span>
+										</Button>
+										<Button
+											onPress={() => setTheme(null)}
+											className={({ isFocusVisible }) =>
+												clsx('flex flex-row items-center gap-1 rounded-sm', isFocusVisible && 'ring')
+											}
+										>
+											<FaComputer />
+											<span className={clsx(theme === null && 'underline')}>System</span>
+										</Button>
 									</div>
-									<Heading level={2} className="text-lg font-bold">
+									<Heading level={2} className="text-xl font-bold">
 										Document Sources
 									</Heading>
 									<div className="flex flex-col gap-2">
@@ -134,6 +133,7 @@ export function Settings({ value, onChange }: SettingsProps) {
 											</Button>
 										</div>
 										<CheckboxGroup
+											aria-label="Enabled Sources"
 											className="flex flex-col gap-2"
 											value={value.sources}
 											onChange={(sources) => {
@@ -144,13 +144,14 @@ export function Settings({ value, onChange }: SettingsProps) {
 												);
 											}}
 										>
-											<Label className="font-bold">Enabled Sources</Label>
-											<div className="flex flex-row flex-wrap gap-x-4 gap-y-2">
+											<div className="flex flex-row flex-wrap gap-x-2 gap-y-2">
 												{AllSources.map((source) => (
 													<Checkbox key={source} value={source} className="flex flex-row items-center gap-1">
-														{({ isSelected }) => (
+														{({ isSelected, isFocusVisible }) => (
 															<>
-																{isSelected ? <FaRegSquareCheck /> : <FaRegSquare />}
+																<span className={clsx('rounded-sm', isFocusVisible && 'ring')}>
+																	{isSelected ? <FaRegSquareCheck /> : <FaRegSquare />}
+																</span>
 																{source}
 															</>
 														)}
