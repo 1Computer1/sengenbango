@@ -30,7 +30,6 @@ export type Source =
 	| 'wordnet-exe';
 
 export type QuerySettings = {
-	lang: Language;
 	sources: Source[];
 };
 
@@ -62,11 +61,14 @@ export const AllSources: Source[] = [
 ];
 
 export const DefaultSettings: QuerySettings = {
-	lang: 'japanese',
 	sources: RecommendedSources,
 };
 
-export async function queryDocuments(query: Query, settings: QuerySettings): Promise<Result<QueryResponse, string>> {
+export async function queryDocuments(
+	query: Query,
+	lang: Language,
+	settings: QuerySettings,
+): Promise<Result<QueryResponse, string>> {
 	const r = await fetch(import.meta.env.VITE_API_URL + '/v1/query', {
 		method: 'POST',
 		headers: {
@@ -74,8 +76,8 @@ export async function queryDocuments(query: Query, settings: QuerySettings): Pro
 		},
 		body: JSON.stringify({
 			query,
+			lang,
 			sources: settings.sources,
-			lang: settings.lang,
 		}),
 	});
 	if (r.ok) {

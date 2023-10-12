@@ -4,8 +4,6 @@ import { Result, parseQuery } from './query/parser';
 import { DefaultSettings, QueryResponse, QuerySettings, queryDocuments } from './query/api';
 import { SearchResult } from './components/SearchResult';
 import { Settings } from './components/Settings';
-import { produce } from 'immer';
-import { LanguageSwitch } from './components/LanguageSwitch';
 
 function App() {
 	const [settings, setSettings] = useState<QuerySettings>(DefaultSettings);
@@ -25,7 +23,11 @@ function App() {
 						}
 						const q = parseQuery(text);
 						if (q.ok) {
-							const r = await queryDocuments(q.value, settings);
+							const isJapanese =
+								text.search(
+									/(?!\p{Punctuation})[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]/u,
+								) >= 0;
+							const r = await queryDocuments(q.value, isJapanese ? 'japanese' : 'english', settings);
 							if (r.ok) {
 								setResults(r);
 							} else {
@@ -42,17 +44,6 @@ function App() {
 						value={settings}
 						onChange={(t) => {
 							setSettings(t);
-							setIsChanged(true);
-						}}
-					/>
-					<LanguageSwitch
-						value={settings.lang}
-						onChange={(lang) => {
-							setSettings(
-								produce((d) => {
-									d.lang = lang;
-								}),
-							);
 							setIsChanged(true);
 						}}
 					/>
