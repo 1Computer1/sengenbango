@@ -103,10 +103,16 @@ impl QueryError {
     }
 }
 
+#[derive(serde::Serialize)]
+struct QueryResponse {
+    total: i64,
+    documents: Vec<Document>,
+}
+
 async fn query(
     State(state): State<ApiState>,
     extract::Json(payload): extract::Json<QueryWithConfig>,
-) -> Result<Json<Vec<Document>>, (StatusCode, String)> {
+) -> Result<Json<QueryResponse>, (StatusCode, String)> {
     if payload.query.complexity() > state.max_complexity {
         return Err(unprocessable_error(QueryError::TooComplex));
     }
@@ -118,7 +124,12 @@ async fn query(
     }
     data::query(&state.pool, &payload)
         .await
-        .map(Json)
+        .map(|x| {
+            Json(QueryResponse {
+                total: x.1,
+                documents: x.0,
+            })
+        })
         .map_err(internal_error)
 }
 

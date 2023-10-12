@@ -1,12 +1,42 @@
 use indoc::indoc;
 use sqlx::{self, PgPool, Postgres, QueryBuilder};
 
-#[derive(sqlx::FromRow, serde::Serialize)]
+#[derive(serde::Serialize)]
 pub struct Document {
     pub source: String,
     pub jp: String,
     pub en: String,
     pub score: f64,
+}
+
+#[derive(sqlx::FromRow)]
+struct QueriedRow {
+    source: String,
+    // name: String,
+    jp: String,
+    en: String,
+    score: f64,
+    // textsearch_index_jp_col: String,
+    // textsearch_index_en_col: String,
+    total: i64,
+}
+
+impl QueriedRow {
+    fn into_document(self) -> Document {
+        let QueriedRow {
+            source,
+            jp,
+            en,
+            score,
+            ..
+        } = self;
+        Document {
+            source,
+            jp,
+            en,
+            score,
+        }
+    }
 }
 
 #[derive(serde::Deserialize)]
@@ -191,10 +221,8 @@ fn build_query(qwc: &QueryWithConfig) -> QueryBuilder<'_, Postgres> {
     );
     qb.push(")");
     qb.push(indoc! {r#"
-            order by score
-            limit 200
         )
-        select *
+        select *, count(*) over() as total
         from (select distinct on(jp) * from matching) deduped
         order by score desc
         limit 100;"#});
@@ -207,8 +235,19 @@ pub async fn has_querytree(pool: &PgPool, qwc: &QueryWithConfig) -> Result<bool,
     Ok(b)
 }
 
-pub async fn query(pool: &PgPool, qwc: &QueryWithConfig) -> Result<Vec<Document>, anyhow::Error> {
+pub async fn query(
+    pool: &PgPool,
+    qwc: &QueryWithConfig,
+) -> Result<(Vec<Document>, i64), anyhow::Error> {
     let mut qb = build_query(qwc);
-    let documents = qb.build_query_as().fetch_all(pool).await?;
-    Ok(documents)
+    let documents: Vec<QueriedRow> = qb.build_query_as().fetch_all(pool).await?;
+    if documents.is_empty() {
+        Ok((vec![], 0))
+    } else {
+        let total = documents[0].total;
+        Ok((
+            documents.into_iter().map(|x| x.into_document()).collect(),
+            total,
+        ))
+    }
 }

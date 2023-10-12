@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Search } from './components/Search';
 import { Result, parseQuery } from './query/parser';
-import { DefaultSettings, ParallelDocument, Settings, queryDocuments } from './query/api';
+import { DefaultSettings, QueryResponse, Settings, queryDocuments } from './query/api';
 import { SearchResult } from './components/SearchResult';
 import { SearchSettings } from './components/SearchSettings';
 import { produce } from 'immer';
@@ -9,7 +9,7 @@ import { LanguageSwitch } from './components/LanguageSwitch';
 
 function App() {
 	const [settings, setSettings] = useState<Settings>(DefaultSettings);
-	const [results, setResults] = useState<Result<ParallelDocument[], string> | null>(null);
+	const [results, setResults] = useState<Result<QueryResponse, string> | null>(null);
 	const [isChanged, setIsChanged] = useState(false);
 
 	return (
@@ -58,14 +58,20 @@ function App() {
 					/>
 				</div>
 				{results && results.ok ? (
-					results.value.length ? (
-						<ol className="flex flex-col gap-1.5 w-full lg:w-2/3">
-							{results.value.map((pdoc) => (
-								<li key={pdoc.en + ' ' + pdoc.jp}>
-									<SearchResult pdoc={pdoc} />
-								</li>
-							))}
-						</ol>
+					results.value.total ? (
+						<div className="flex flex-col items-center gap-3 w-full lg:w-2/3">
+							<div className="text-gray-400 text-xs self-end">
+								Displaying top {results.value.documents.length} of {results.value.total}{' '}
+								{results.value.total === 1 ? 'result' : 'results'}
+							</div>
+							<ol className="flex flex-col gap-1.5 w-full">
+								{results.value.documents.map((pdoc) => (
+									<li key={pdoc.en + ' ' + pdoc.jp}>
+										<SearchResult pdoc={pdoc} />
+									</li>
+								))}
+							</ol>
+						</div>
 					) : (
 						<div>No results found.</div>
 					)

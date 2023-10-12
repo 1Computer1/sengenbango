@@ -1,5 +1,10 @@
 import { Query, Result } from './parser';
 
+export interface QueryResponse {
+	total: number;
+	documents: ParallelDocument[];
+}
+
 export interface ParallelDocument {
 	source: string;
 	jp: string;
@@ -61,7 +66,7 @@ export const DefaultSettings: Settings = {
 	sources: RecommendedSources,
 };
 
-export async function queryDocuments(query: Query, settings: Settings): Promise<Result<ParallelDocument[], string>> {
+export async function queryDocuments(query: Query, settings: Settings): Promise<Result<QueryResponse, string>> {
 	const r = await fetch(import.meta.env.VITE_API_URL + '/v1/query', {
 		method: 'POST',
 		headers: {
