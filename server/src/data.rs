@@ -173,21 +173,21 @@ fn push_tsquery<'a>(query: &'a Query, lang: &'a Language, qb: &mut QueryBuilder<
         And(x, y) => {
             qb.push("(");
             push_tsquery(x, lang, qb);
-            qb.push("&&");
+            qb.push(" && ");
             push_tsquery(y, lang, qb);
             qb.push(")");
         }
         Or(x, y) => {
             qb.push("(");
             push_tsquery(x, lang, qb);
-            qb.push("||");
+            qb.push(" || ");
             push_tsquery(y, lang, qb);
             qb.push(")");
         }
         Seq(x, y) => {
             qb.push("(");
             push_tsquery(x, lang, qb);
-            qb.push("<->");
+            qb.push(" <-> ");
             push_tsquery(y, lang, qb);
             qb.push(")");
         }
