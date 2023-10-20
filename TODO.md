@@ -7,5 +7,3 @@
 - 🎨 Display human-understandable query parsing errors and query processing errors.
 
 - 🐘 Try the RUM index again when [postgrespro/rum#119](https://github.com/postgrespro/rum/issues/119) is fixed.
-
-- 🌐 Set up website.
