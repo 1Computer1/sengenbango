@@ -120,7 +120,7 @@ function App() {
 					enterTo="opacity-100"
 					className={clsx(
 						'flex flex-col items-center gap-3 w-full lg:w-2/3',
-						isInvalidated(searchStatus) && 'opacity-75',
+						isInvalidated(searchStatus) && 'opacity-60',
 					)}
 				>
 					{results != null &&

@@ -25,12 +25,12 @@ export function CustomDialog({ button, title, children }: CustomDialogProps) {
 				isDismissable
 				isOpen={isOpen}
 				onOpenChange={setIsOpen}
-				className="fixed z-20 inset-0 flex flex-col justify-center items-center w-screen h-[100dvh] h-screen bg-black bg-opacity-20"
+				className="fixed z-20 inset-0 flex flex-col justify-center items-center w-screen h-[100dvh] h-screen bg-black bg-opacity-60"
 			>
 				<div className="flex flex-col justify-center items-center">
 					<Modal isOpen={isOpen} onOpenChange={setIsOpen} className="max-w-[100vw] max-h-[100dvh] max-h-screen">
 						<Dialog className="flex flex-col max-w-[100vw] max-h-[100dvh] max-h-screen px-4 py-8">
-							<div className="flex flex-row justify-between items-center w-full bg-zinc-400 dark:bg-zinc-800 dark:text-gray-300 rounded-t-xl p-2 px-3">
+							<div className="flex flex-row justify-between items-center w-full bg-zinc-300 dark:bg-zinc-800 dark:text-gray-300 rounded-t-xl p-2 px-3">
 								<Heading level={1} className="text-2xl font-bold">
 									{title}
 								</Heading>
