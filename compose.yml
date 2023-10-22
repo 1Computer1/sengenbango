@@ -5,18 +5,10 @@ services:
     build: ./database
     environment:
       POSTGRES_PASSWORD: aikotoba
-    ports:
-      - 5432:5432
     volumes:
       - ./data/scored:/data
       # - ./data/output:/data
       - ./postgresdata:/var/lib/postgresql/data
-
-  adminer:
-    image: adminer
-    restart: unless-stopped
-    ports:
-      - 8080:8080
 
   app:
     build: ./app
@@ -37,7 +29,7 @@ services:
     image: nginx:alpine
     restart: unless-stopped
     ports:
-      - 80:80
+      - 1080:80
       # - 443:443
       # - 443:443/udp
     volumes:
