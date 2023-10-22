@@ -17,6 +17,7 @@
 		"react-aria-components": "^1.0.0-beta.0",
 		"react-dom": "^18.2.0",
 		"react-icons": "^4.11.0",
+		"react-router-dom": "^6.17.0",
 		"use-immer": "^0.9.0"
 	},
 	"devDependencies": {

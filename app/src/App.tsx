@@ -1,15 +1,56 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Search } from './components/Search';
+import { SearchStatus } from './util/SearchStatus';
 import { Result, parseQuery } from './query/parser';
 import { DefaultSettings, QueryResponse, QuerySettings, queryDocuments } from './query/api';
 import { SearchResult } from './components/SearchResult';
 import { Settings } from './components/Settings';
 import { Help } from './components/Help';
+import { useSearchParams } from 'react-router-dom';
+
+const JAPANESE_REGEX =
+	/(?!\p{Punctuation})[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]/u;
 
 function App() {
 	const [settings, setSettings] = useState<QuerySettings>(DefaultSettings);
 	const [results, setResults] = useState<Result<QueryResponse, string> | null>(null);
-	const [isChanged, setIsChanged] = useState(false);
+	const [searchStatus, setSearchStatus] = useState<SearchStatus>(SearchStatus.NONE);
+	const [searchParams, setSearchParams] = useSearchParams();
+	const [queryText, setQueryText] = useState('');
+
+	const submitQuery = useCallback(
+		async (q: string) => {
+			if (!q) {
+				return;
+			}
+			const query = parseQuery(q);
+			if (query.ok) {
+				const isJapanese = q.search(JAPANESE_REGEX) >= 0;
+				const r = await queryDocuments(query.value, isJapanese ? 'japanese' : 'english', settings);
+				if (r.ok) {
+					setResults(r);
+				} else {
+					setResults({ ok: false, error: String(r.error) });
+				}
+			} else {
+				setResults({ ok: false, error: query.error.join('\n') });
+			}
+		},
+		[settings],
+	);
+
+	useEffect(() => {
+		const q = searchParams.get('q') ?? '';
+		if (q) {
+			document.title = `千言万語 - ${q}`;
+			setQueryText(q);
+			(async () => {
+				setSearchStatus(SearchStatus.LOAD);
+				await submitQuery(q);
+				setSearchStatus(SearchStatus.DONE);
+			})();
+		}
+	}, [searchParams]);
 
 	return (
 		<div className="container mx-auto p-4">
@@ -17,28 +58,14 @@ function App() {
 				<Search
 					autoFocus
 					className="w-full lg:w-1/2"
-					searchDone={results != null && !isChanged}
-					onChange={() => setIsChanged(true)}
-					onSubmit={async (text) => {
-						if (!text) {
-							return;
-						}
-						const q = parseQuery(text);
-						if (q.ok) {
-							const isJapanese =
-								text.search(
-									/(?!\p{Punctuation})[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]/u,
-								) >= 0;
-							const r = await queryDocuments(q.value, isJapanese ? 'japanese' : 'english', settings);
-							if (r.ok) {
-								setResults(r);
-							} else {
-								setResults({ ok: false, error: String(r.error) });
-							}
-						} else {
-							setResults({ ok: false, error: q.error.join('\n') });
-						}
-						setIsChanged(false);
+					searchStatus={searchStatus}
+					value={queryText}
+					onChange={(value) => {
+						setQueryText(value);
+						setSearchStatus(SearchStatus.NONE);
+					}}
+					onSubmit={(q) => {
+						setSearchParams({ q });
 					}}
 				/>
 				<div className="flex flex-row items-center gap-4">
@@ -47,7 +74,7 @@ function App() {
 						value={settings}
 						onChange={(t) => {
 							setSettings(t);
-							setIsChanged(true);
+							setSearchStatus(SearchStatus.NONE);
 						}}
 					/>
 				</div>
