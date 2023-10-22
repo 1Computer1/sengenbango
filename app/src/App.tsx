@@ -158,7 +158,7 @@ function App() {
 						))}
 				</Transition>
 				<Transition
-					show={results == null}
+					show={searchStatus === SearchStatus.UNSENT && results == null}
 					enter="transition-opacity duration-75"
 					enterFrom="opacity-0"
 					enterTo="opacity-100"
