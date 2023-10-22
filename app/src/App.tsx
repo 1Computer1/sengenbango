@@ -7,6 +7,7 @@ import { SearchResult } from './components/SearchResult';
 import { Settings } from './components/Settings';
 import { Help } from './components/Help';
 import { useSearchParams } from 'react-router-dom';
+import { SearchResultLoading } from './components/SearchResultLoading';
 
 const JAPANESE_REGEX =
 	/(?!\p{Punctuation})[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]/u;
@@ -78,7 +79,22 @@ function App() {
 						}}
 					/>
 				</div>
-				{results && results.ok ? (
+				{searchStatus === SearchStatus.LOAD ? (
+					<div className="flex flex-col items-center gap-3 w-full lg:w-2/3">
+						<div className="text-gray-400 text-xs self-end">
+							<div className="h-4 w-32 p-0.5 animate-pulse">
+								<div className="w-full h-full rounded-sm bg-gray-300 dark:bg-gray-600 "></div>
+							</div>
+						</div>
+						<ol className="flex flex-col gap-1.5 w-full">
+							{Array.from({ length: 8 }).map((_, i) => (
+								<li key={i}>
+									<SearchResultLoading />
+								</li>
+							))}
+						</ol>
+					</div>
+				) : results && results.ok ? (
 					results.value.total ? (
 						<div className="flex flex-col items-center gap-3 w-full lg:w-2/3">
 							<div className="text-gray-400 text-xs self-end">
