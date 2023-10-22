@@ -70,7 +70,7 @@ export function Settings({ value, onChange }: SettingsProps) {
 					Document Sources
 				</Heading>
 				<div className="flex flex-col gap-2">
-					<div className="flex flex-row flex-wrap gap-2">
+					<div className="flex flex-col lg:flex-row gap-2">
 						<Button
 							className="flex flex-row items-center gap-1"
 							onPress={() => {
