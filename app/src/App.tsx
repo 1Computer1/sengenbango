@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Search } from './components/Search';
 import { SearchStatus, isInvalidated, isLoading, transitionDone, transitionUnsent } from './util/SearchStatus';
 import { Result, parseQuery } from './query/parser';
-import { DefaultSettings, QueryResponse, QuerySettings, queryDocuments } from './query/api';
+import { DefaultQuerySettings, QueryResponse, QuerySettings, queryDocuments } from './query/api';
 import { SearchResult } from './components/SearchResult';
 import { Settings } from './components/Settings';
 import { Help } from './components/Help';
@@ -10,12 +10,14 @@ import { useSearchParams } from 'react-router-dom';
 import { SearchResultLoading } from './components/SearchResultLoading';
 import { Transition } from '@headlessui/react';
 import clsx from 'clsx';
+import { DefaultSearchSettings, SearchSettings } from './util/SearchSettings';
 
-const JAPANESE_REGEX =
+const JapaneseRegex =
 	/(?!\p{Punctuation})[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]/u;
 
 function App() {
-	const [settings, setSettings] = useState<QuerySettings>(DefaultSettings);
+	const [querySettings, setQuerySettings] = useState<QuerySettings>(DefaultQuerySettings);
+	const [searchSettings, setSearchSettings] = useState<SearchSettings>(DefaultSearchSettings);
 	const [results, setResults] = useState<Result<QueryResponse, string> | null>(null);
 	const [searchStatus, setSearchStatus] = useState<SearchStatus>(SearchStatus.UNSENT);
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -28,8 +30,8 @@ function App() {
 			}
 			const query = parseQuery(q);
 			if (query.ok) {
-				const isJapanese = q.search(JAPANESE_REGEX) >= 0;
-				const r = await queryDocuments(query.value, isJapanese ? 'japanese' : 'english', settings);
+				const isJapanese = q.search(JapaneseRegex) >= 0;
+				const r = await queryDocuments(query.value, isJapanese ? 'japanese' : 'english', querySettings);
 				if (r.ok) {
 					setResults(r);
 				} else {
@@ -39,7 +41,7 @@ function App() {
 				setResults({ ok: false, error: query.error.join('\n') });
 			}
 		},
-		[settings],
+		[querySettings],
 	);
 
 	useEffect(() => {
@@ -51,7 +53,7 @@ function App() {
 			(async () => {
 				setSearchStatus(SearchStatus.LOADING);
 				await submitQuery(q);
-				setSearchStatus(transitionDone(searchStatus));
+				setSearchStatus((s) => transitionDone(s));
 			})();
 		}
 	}, [searchParams]);
@@ -82,10 +84,14 @@ function App() {
 				<div className="flex flex-row items-center gap-4">
 					<Help />
 					<Settings
-						value={settings}
-						onChange={(t) => {
-							setSettings(t);
+						querySettings={querySettings}
+						onQuerySettingsChange={(t) => {
+							setQuerySettings(t);
 							setSearchStatus(transitionUnsent(searchStatus));
+						}}
+						searchSettings={searchSettings}
+						onSearchSettingsChange={(t) => {
+							setSearchSettings(t);
 						}}
 					/>
 				</div>
@@ -134,7 +140,7 @@ function App() {
 									<ol className="flex flex-col gap-1.5 w-full">
 										{results.value.documents.map((pdoc) => (
 											<li key={pdoc.en + ' ' + pdoc.jp}>
-												<SearchResult pdoc={pdoc} />
+												<SearchResult pdoc={pdoc} showEnglish={searchSettings.showEnglish} />
 											</li>
 										))}
 									</ol>

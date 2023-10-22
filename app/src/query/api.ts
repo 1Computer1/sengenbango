@@ -60,7 +60,7 @@ export const AllSources: Source[] = [
 	'wordnet-exe',
 ];
 
-export const DefaultSettings: QuerySettings = {
+export const DefaultQuerySettings: QuerySettings = {
 	sources: RecommendedSources,
 };
 

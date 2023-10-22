@@ -1,4 +1,4 @@
-import { Button, Checkbox, CheckboxGroup, Heading } from 'react-aria-components';
+import { Button, Checkbox, CheckboxGroup, Heading, Switch } from 'react-aria-components';
 import {
 	FaCheckDouble,
 	FaComputer,
@@ -8,6 +8,8 @@ import {
 	FaRegSquareCheck,
 	FaStar,
 	FaSun,
+	FaToggleOff,
+	FaToggleOn,
 	FaXmark,
 } from 'react-icons/fa6';
 import { AllSources, RecommendedSources, QuerySettings, Source } from '../query/api';
@@ -15,13 +17,21 @@ import { produce } from 'immer';
 import clsx from 'clsx';
 import { useTheme } from '../hooks/useTheme';
 import { CustomDialog } from './layout/CustomDialog';
+import { SearchSettings } from '../util/SearchSettings';
 
 export interface SettingsProps {
-	value: QuerySettings;
-	onChange: (settings: QuerySettings) => void;
+	querySettings: QuerySettings;
+	onQuerySettingsChange: (settings: QuerySettings) => void;
+	searchSettings: SearchSettings;
+	onSearchSettingsChange: (settings: SearchSettings) => void;
 }
 
-export function Settings({ value, onChange }: SettingsProps) {
+export function Settings({
+	querySettings,
+	onQuerySettingsChange,
+	searchSettings,
+	onSearchSettingsChange,
+}: SettingsProps) {
 	const [theme, setTheme] = useTheme();
 
 	return (
@@ -67,6 +77,23 @@ export function Settings({ value, onChange }: SettingsProps) {
 					</Button>
 				</div>
 				<Heading level={2} className="text-xl font-bold">
+					Search Results
+				</Heading>
+				<div className="flex flex-col gap-2">
+					<Switch
+						className="flex flex-row items-center gap-1"
+						onChange={(t) => {
+							onSearchSettingsChange(
+								produce(searchSettings, (d) => {
+									d.showEnglish = t;
+								}),
+							);
+						}}
+					>
+						{!searchSettings.showEnglish ? <FaToggleOn /> : <FaToggleOff />} Hide English Translation
+					</Switch>
+				</div>
+				<Heading level={2} className="text-xl font-bold">
 					Document Sources
 				</Heading>
 				<div className="flex flex-col gap-2">
@@ -74,8 +101,8 @@ export function Settings({ value, onChange }: SettingsProps) {
 						<Button
 							className="flex flex-row items-center gap-1"
 							onPress={() => {
-								onChange(
-									produce(value, (d) => {
+								onQuerySettingsChange(
+									produce(querySettings, (d) => {
 										d.sources = RecommendedSources;
 									}),
 								);
@@ -87,8 +114,8 @@ export function Settings({ value, onChange }: SettingsProps) {
 						<Button
 							className="flex flex-row items-center gap-1"
 							onPress={() => {
-								onChange(
-									produce(value, (d) => {
+								onQuerySettingsChange(
+									produce(querySettings, (d) => {
 										d.sources = AllSources;
 									}),
 								);
@@ -100,8 +127,8 @@ export function Settings({ value, onChange }: SettingsProps) {
 						<Button
 							className="flex flex-row items-center gap-1"
 							onPress={() => {
-								onChange(
-									produce(value, (d) => {
+								onQuerySettingsChange(
+									produce(querySettings, (d) => {
 										d.sources = [];
 									}),
 								);
@@ -114,10 +141,10 @@ export function Settings({ value, onChange }: SettingsProps) {
 					<CheckboxGroup
 						aria-label="Enabled Sources"
 						className="flex flex-col gap-2"
-						value={value.sources}
+						value={querySettings.sources}
 						onChange={(sources) => {
-							onChange(
-								produce(value, (d) => {
+							onQuerySettingsChange(
+								produce(querySettings, (d) => {
 									d.sources = sources as Source[];
 								}),
 							);
