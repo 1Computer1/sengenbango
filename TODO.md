@@ -7,3 +7,9 @@
 - 🎨 Display human-understandable query parsing errors and query processing errors.
 
 - 🐘 Try the RUM index again when [postgrespro/rum#119](https://github.com/postgrespro/rum/issues/119) is fixed.
+
+- 🐘 🦀 🎨 Add pagination or other means of displaying more sentences.
+
+- 🎨 Fix English text alignment and cursor pointer type inside spoiler button.
+
+- 🎨 Make search results appear/disappear smoother.
