@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Search } from './components/Search';
-import { SearchStatus } from './util/SearchStatus';
+import { SearchStatus, isInvalidated, isLoading, transitionDone, transitionUnsent } from './util/SearchStatus';
 import { Result, parseQuery } from './query/parser';
 import { DefaultSettings, QueryResponse, QuerySettings, queryDocuments } from './query/api';
 import { SearchResult } from './components/SearchResult';
@@ -9,6 +9,7 @@ import { Help } from './components/Help';
 import { useSearchParams } from 'react-router-dom';
 import { SearchResultLoading } from './components/SearchResultLoading';
 import { Transition } from '@headlessui/react';
+import clsx from 'clsx';
 
 const JAPANESE_REGEX =
 	/(?!\p{Punctuation})[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]/u;
@@ -42,18 +43,15 @@ function App() {
 	);
 
 	useEffect(() => {
-		const q = searchParams.get('q') ?? '';
-		if (q) {
+		let q = searchParams.get('q') ?? '';
+		q = q.trim();
+		if (q && q !== queryText) {
 			document.title = `千言万語 - ${q}`;
 			setQueryText(q);
 			(async () => {
 				setSearchStatus(SearchStatus.LOADING);
 				await submitQuery(q);
-				if (searchStatus === SearchStatus.LOADING_UNSENT) {
-					setSearchStatus(SearchStatus.DONE_UNSENT);
-				} else {
-					setSearchStatus(SearchStatus.DONE);
-				}
+				setSearchStatus(transitionDone(searchStatus));
 			})();
 		}
 	}, [searchParams]);
@@ -67,14 +65,18 @@ function App() {
 					value={queryText}
 					onChange={(value) => {
 						setQueryText(value);
-						if (searchStatus === SearchStatus.DONE) {
-							setSearchStatus(SearchStatus.DONE_UNSENT);
-						} else if (searchStatus === SearchStatus.LOADING) {
-							setSearchStatus(SearchStatus.LOADING_UNSENT);
-						}
+						setSearchStatus(transitionUnsent(searchStatus));
 					}}
-					onSubmit={(q) => {
-						setSearchParams({ q });
+					onSubmit={async (q) => {
+						q = q.trim();
+						if (q) {
+							document.title = `千言万語 - ${q}`;
+							setQueryText(q);
+							setSearchParams({ q });
+							setSearchStatus(SearchStatus.LOADING);
+							await submitQuery(q);
+							setSearchStatus(transitionDone(searchStatus));
+						}
 					}}
 				/>
 				<div className="flex flex-row items-center gap-4">
@@ -83,22 +85,18 @@ function App() {
 						value={settings}
 						onChange={(t) => {
 							setSettings(t);
-							if (searchStatus === SearchStatus.DONE) {
-								setSearchStatus(SearchStatus.DONE_UNSENT);
-							} else if (searchStatus === SearchStatus.LOADING) {
-								setSearchStatus(SearchStatus.LOADING_UNSENT);
-							}
+							setSearchStatus(transitionUnsent(searchStatus));
 						}}
 					/>
 				</div>
 				<Transition
-					show={searchStatus === SearchStatus.LOADING || searchStatus === SearchStatus.LOADING_UNSENT}
+					show={isLoading(searchStatus)}
 					enter="transition-opacity duration-75"
 					enterFrom="opacity-0"
 					enterTo="opacity-100"
 					className="flex flex-col items-center gap-3 w-full lg:w-2/3"
 				>
-					{(searchStatus === SearchStatus.LOADING || searchStatus === SearchStatus.LOADING_UNSENT) && (
+					{isLoading(searchStatus) && (
 						<>
 							<div className="text-gray-400 text-xs self-end">
 								<div className="h-4 w-32 p-0.5 animate-pulse">
@@ -116,13 +114,14 @@ function App() {
 					)}
 				</Transition>
 				<Transition
-					show={
-						results != null && searchStatus !== SearchStatus.LOADING && searchStatus !== SearchStatus.LOADING_UNSENT
-					}
+					show={results != null && !isLoading(searchStatus)}
 					enter="transition-opacity duration-75"
 					enterFrom="opacity-0"
 					enterTo="opacity-100"
-					className="flex flex-col items-center gap-3 w-full lg:w-2/3"
+					className={clsx(
+						'flex flex-col items-center gap-3 w-full lg:w-2/3',
+						isInvalidated(searchStatus) && 'opacity-75',
+					)}
 				>
 					{results != null &&
 						(results.ok ? (
@@ -141,7 +140,11 @@ function App() {
 									</ol>
 								</>
 							) : (
-								<div>No results found.</div>
+								<div className="text-center">
+									No results found.
+									<br />
+									Consider adding more sources in Settings &gt; Document Sources or changing your query.
+								</div>
 							)
 						) : (
 							<div className="text-red-600">{results.error}</div>
@@ -153,7 +156,7 @@ function App() {
 					enterFrom="opacity-0"
 					enterTo="opacity-100"
 				>
-					<div>Type something to search!</div>
+					<div>Type Japanese or English text to search!</div>
 				</Transition>
 			</div>
 		</div>
