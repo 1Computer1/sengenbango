@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Search } from './components/Search';
 import { SearchStatus, isInvalidated, isLoading, transitionDone, transitionUnsent } from './util/SearchStatus';
 import { Result, parseQuery } from './query/parser';
-import { DefaultQuerySettings, QueryResponse, QuerySettings, queryDocuments } from './query/api';
+import { DefaultQuerySettings, QueryResponse, queryDocuments } from './query/api';
 import { SearchResult } from './components/SearchResult';
 import { Settings } from './components/Settings';
 import { Help } from './components/Help';
@@ -10,14 +10,15 @@ import { useSearchParams } from 'react-router-dom';
 import { SearchResultLoading } from './components/SearchResultLoading';
 import { Transition } from '@headlessui/react';
 import clsx from 'clsx';
-import { DefaultSearchSettings, SearchSettings } from './util/SearchSettings';
+import { DefaultSearchSettings } from './util/SearchSettings';
+import { useJSONLocalStorage } from './hooks/useLocalStorage';
 
 const JapaneseRegex =
 	/(?!\p{Punctuation})[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]/u;
 
 function App() {
-	const [querySettings, setQuerySettings] = useState<QuerySettings>(DefaultQuerySettings);
-	const [searchSettings, setSearchSettings] = useState<SearchSettings>(DefaultSearchSettings);
+	const [querySettings, setQuerySettings] = useJSONLocalStorage('querySettings', DefaultQuerySettings);
+	const [searchSettings, setSearchSettings] = useJSONLocalStorage('searchSettings', DefaultSearchSettings);
 	const [results, setResults] = useState<Result<QueryResponse, string> | null>(null);
 	const [searchStatus, setSearchStatus] = useState<SearchStatus>(SearchStatus.UNSENT);
 	const [searchParams, setSearchParams] = useSearchParams();
