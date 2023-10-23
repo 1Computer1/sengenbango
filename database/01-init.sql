@@ -57,6 +57,6 @@ begin
     create index textsearch_index_jp on documents using gin (textsearch_index_jp_col);
     create index textsearch_index_en on documents using gin (textsearch_index_en_col);
     create index score_index on documents using btree (score desc);
-    create index source_index on documents using btree (source)
+    create index source_index on documents using btree (source);
 end;
 $$;
