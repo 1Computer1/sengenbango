@@ -3,6 +3,8 @@ import re
 RE_SPACES = re.compile(r'[\r\n\t\f\v \u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+', flags=re.M)
 RE_EN = re.compile(r'[A-Za-z]')
 RE_JP = re.compile(r'[一-龯ぁ-ゔゞァ-・ヽヾ゛゜]')
+RE_AR = re.compile(r'[\u0621-\u064A]')
+RE_GR = re.compile(r'[\u0370-\u03ff\u1f00-\u1fff]')
 
 ens = r'[A-Za-z]'
 
@@ -65,6 +67,15 @@ def likely_good(en, jp, check_punctuation_en=True, check_punctuation_jp=True, al
         if not sentence_like_jp:
             return False
     return True
+
+def is_noise(t):
+    return any(x in t for x in ('�', '❖', '◆', '─', '━', '│', '┃', '￣', '/', '|', '＿')) or RE_AR.search(t) or RE_GR.search(t)
+
+def is_too_english(t):
+    """
+    For Japanese text.
+    """
+    return len(RE_EN.findall(t)) / len(RE_JP.findall(t)) >= 0.5
 
 def clean_spaces(t):
     return RE_SPACES.sub(' ', t)

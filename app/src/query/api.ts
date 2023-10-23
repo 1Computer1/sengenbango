@@ -19,10 +19,12 @@ export type Source =
 	| 'bpersona-en-ja'
 	| 'bpersona-ja-en'
 	| 'coursera'
+	| 'flores'
 	| 'jparacrawl'
 	| 'kyoto'
 	| 'legal'
 	| 'natcom'
+	| 'nllb'
 	| 'novels'
 	| 'reuters'
 	| 'tatoeba'
@@ -35,8 +37,10 @@ export type QuerySettings = {
 
 export const RecommendedSources: Source[] = [
 	'basics',
+	'bpersona-en-ja',
 	'bpersona-ja-en',
 	'coursera',
+	'flores',
 	'kyoto',
 	'novels',
 	'reuters',
@@ -50,9 +54,11 @@ export const AllSources: Source[] = [
 	'bpersona-ja-en',
 	'coursera',
 	'jparacrawl',
+	'flores',
 	'kyoto',
 	'legal',
 	'natcom',
+	'nllb',
 	'novels',
 	'reuters',
 	'tatoeba',

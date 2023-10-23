@@ -79,10 +79,12 @@ pub enum Source {
     BpersonaEnJa,
     BpersonaJaEn,
     Coursera,
+    Flores,
     Jparacrawl,
     Kyoto,
     Legal,
     Natcom,
+    Nllb,
     Novels,
     Reuters,
     Tatoeba,
@@ -102,17 +104,19 @@ impl Source {
     }
 }
 
-static ALL_SOURCES: [Source; 13] = {
+static ALL_SOURCES: [Source; 15] = {
     use Source::*;
     [
         Basics,
         BpersonaEnJa,
         BpersonaJaEn,
         Coursera,
+        Flores,
         Jparacrawl,
         Kyoto,
         Legal,
         Natcom,
+        Nllb,
         Novels,
         Reuters,
         Tatoeba,

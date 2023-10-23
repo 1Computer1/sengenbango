@@ -1,6 +1,6 @@
 -- create extension rum;
 
-create table documents (
+create table if not exists documents (
     source text not null,
     name text not null,
     score float not null,
@@ -12,23 +12,25 @@ create table documents (
         generated always as (to_tsvector('english_nostop', en)) stored
 );
 
-create procedure copy_data(sources text[] default null) language plpgsql as
+create or replace procedure copy_data(sources text[] default null) language plpgsql as
 $$
 declare
     known_sources text[] := array[
-        'tatoeba',
-        'kyoto',
-        'jparacrawl',
-        'legal',
-        'coursera',
-        'reuters',
-        'novels',
         'basics',
-        'wordnet_exe',
-        'wordnet_def',
-        'bpersona_ja_en',
         'bpersona_en_ja',
-        'natcom'
+        'bpersona_ja_en',
+        'coursera',
+        'flores',
+        'jparacrawl',
+        'kyoto',
+        'legal',
+        'natcom',
+        'nllb',
+        'novels',
+        'reuters',
+        'tatoeba',
+        'wordnet_def',
+        'wordnet_exe'
     ];
     s text;
     copy_cmd text;
@@ -51,6 +53,7 @@ begin
     -- create index textsearch_index_en on documents using rum (textsearch_index_en_col rum_tsvector_addon_ops, score)
     --     with (attach = 'score', to = 'textsearch_index_en_col');
 
+    raise notice 'Creating indices';
     create index textsearch_index_jp on documents using gin (textsearch_index_jp_col);
     create index textsearch_index_en on documents using gin (textsearch_index_en_col);
     create index score_index on documents using btree (score desc);

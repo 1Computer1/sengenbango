@@ -1,17 +1,33 @@
 import basics
 import bpersona
 import coursera
+import flores
 import jparacrawl
 import kyoto
 import legal
 import natcom
+import nllb
 import novels
 import reuters
 import tatoeba
 import wordnet
 
 def main():
-    for x in [basics, bpersona, coursera, jparacrawl, kyoto, legal, natcom, novels, reuters, tatoeba, wordnet]:
+    for x in [
+        basics,
+        bpersona,
+        coursera,
+        flores,
+        jparacrawl,
+        kyoto,
+        legal,
+        natcom,
+        nllb,
+        novels,
+        reuters,
+        tatoeba,
+        wordnet
+    ]:
         print(f'=== {x.__name__} ===')
         x.main()
 
