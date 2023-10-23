@@ -9,5 +9,3 @@
 - 🐘 Try the RUM index again when [postgrespro/rum#119](https://github.com/postgrespro/rum/issues/119) is fixed.
 
 - 🐘 🦀 🎨 Add pagination or other means of displaying more sentences.
-
-- 🎨 Make search results appear/disappear smoother.

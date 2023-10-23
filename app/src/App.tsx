@@ -98,9 +98,12 @@ function App() {
 				</div>
 				<Transition
 					show={isLoading(searchStatus)}
-					enter="transition-opacity duration-75"
+					enter="transition-opacity duration-100"
 					enterFrom="opacity-0"
 					enterTo="opacity-100"
+					leave="transition-opacity duration-[10ms]"
+					leaveFrom="opacity-100"
+					leaveTo="opacity-0"
 					className="flex flex-col items-center gap-3 w-full lg:w-2/3"
 				>
 					{isLoading(searchStatus) && (
@@ -122,9 +125,12 @@ function App() {
 				</Transition>
 				<Transition
 					show={results != null && !isLoading(searchStatus)}
-					enter="transition-opacity duration-75"
+					enter="transition-opacity duration-[10ms]"
 					enterFrom="opacity-0"
 					enterTo="opacity-100"
+					leave="transition-opacity duration-[10ms]"
+					leaveFrom="opacity-100"
+					leaveTo="opacity-0"
 					className={clsx(
 						'flex flex-col items-center gap-3 w-full lg:w-2/3',
 						isInvalidated(searchStatus) && 'opacity-60',
@@ -159,9 +165,9 @@ function App() {
 				</Transition>
 				<Transition
 					show={searchStatus === SearchStatus.UNSENT && results == null}
-					enter="transition-opacity duration-75"
-					enterFrom="opacity-0"
-					enterTo="opacity-100"
+					leave="transition-opacity duration-[10ms]"
+					leaveFrom="opacity-100"
+					leaveTo="opacity-0"
 				>
 					<div>Type Japanese or English text to search!</div>
 				</Transition>
