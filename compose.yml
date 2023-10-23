@@ -5,6 +5,7 @@ services:
     build: ./database
     environment:
       POSTGRES_PASSWORD: aikotoba
+    shm_size: 256mb
     volumes:
       - ./data/scored:/data
       # - ./data/output:/data
@@ -22,6 +23,7 @@ services:
       SGBG_RATE_NUM: 3
       SGBG_RATE_PER: 6
       SGBG_COMPLEX: 10
+      SGBG_QUERY_TIME: 10
     depends_on:
       - db
 

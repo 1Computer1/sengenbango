@@ -6,16 +6,17 @@ WORKDIR /usr/src/server
 
 RUN echo 'fn main() {}' > dummy.rs
 COPY Cargo.toml .
+COPY Cargo.lock .
 RUN sed -i 's#src/main.rs#dummy.rs#' Cargo.toml
 RUN cargo build --release
 RUN sed -i 's#dummy.rs#src/main.rs#' Cargo.toml
 
 COPY . .
-RUN cargo install --path .
+RUN cargo build --release
 
 FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
-COPY --from=builder /usr/local/cargo/bin/sengenbango-server /usr/local/bin/sengenbango-server
+COPY --from=builder /usr/src/server/target/release/sengenbango-server /usr/local/bin/sengenbango-server
 
 CMD ["sengenbango-server"]

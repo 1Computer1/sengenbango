@@ -8,6 +8,7 @@
 - `SGBG_RATE_NUM` - Rate limit, number of requests per duration.
 - `SGBG_RATE_PER` - Rate limit, duration in seconds.
 - `SGBG_COMPLEX` - Max complexity of a query.
+- `SGBG_QUERY_TIME` - Max number of seconds a query can take.
 
 ## API
 

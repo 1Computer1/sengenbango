@@ -9,6 +9,7 @@ use data::{Document, QueryWithConfig};
 use sqlx::{postgres::PgPoolOptions, PgPool};
 use std::net::SocketAddr;
 use std::{env, time::Duration};
+
 use tower::{buffer::BufferLayer, limit::RateLimitLayer, ServiceBuilder};
 use tower_http::cors::{Any, CorsLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
@@ -19,6 +20,7 @@ mod data;
 struct ApiState {
     pool: PgPool,
     max_complexity: usize,
+    max_query_time: Duration,
 }
 
 #[tokio::main]
@@ -50,6 +52,12 @@ async fn main() {
         .and_then(|x| str::parse(&x).ok())
         .unwrap_or(10);
 
+    let max_query_time = std::env::var("SGBG_QUERY_TIME")
+        .ok()
+        .and_then(|x| str::parse(&x).ok())
+        .map(Duration::from_secs)
+        .unwrap_or(Duration::from_secs(10));
+
     let pool = PgPoolOptions::new()
         .connect(&db_str)
         .await
@@ -60,6 +68,7 @@ async fn main() {
         .with_state(ApiState {
             pool,
             max_complexity,
+            max_query_time,
         })
         .layer(
             CorsLayer::new()
@@ -91,6 +100,7 @@ async fn main() {
 enum QueryError {
     TooComplex,
     NotMeaningful,
+    TookTooLong,
 }
 
 impl QueryError {
@@ -99,6 +109,7 @@ impl QueryError {
         match self {
             TooComplex => "Query is too complex".to_string(),
             NotMeaningful => "Query does not have any meaningful search terms".to_string(),
+            TookTooLong => "Query took too long, use more specific search terms".to_string(),
         }
     }
 }
@@ -122,15 +133,17 @@ async fn query(
     if !has_querytree {
         return Err(unprocessable_error(QueryError::NotMeaningful));
     }
-    data::query(&state.pool, &payload)
-        .await
-        .map(|x| {
-            Json(QueryResponse {
-                total: x.1,
-                documents: x.0,
+    match tokio::time::timeout(state.max_query_time, data::query(&state.pool, &payload)).await {
+        Err(_) => Err(unprocessable_error(QueryError::TookTooLong)),
+        Ok(x) => x
+            .map(|x| {
+                Json(QueryResponse {
+                    total: x.1,
+                    documents: x.0,
+                })
             })
-        })
-        .map_err(internal_error)
+            .map_err(internal_error),
+    }
 }
 
 fn unprocessable_error(error: QueryError) -> (StatusCode, String) {
