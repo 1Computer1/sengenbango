@@ -10,6 +10,4 @@
 
 - 🐘 🦀 🎨 Add pagination or other means of displaying more sentences.
 
-- 🎨 Fix English text alignment and cursor pointer type inside spoiler button.
-
 - 🎨 Make search results appear/disappear smoother.
