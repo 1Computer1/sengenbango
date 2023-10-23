@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Search } from './components/Search';
 import { SearchStatus, isInvalidated, isLoading, transitionDone, transitionUnsent } from './util/SearchStatus';
-import { Result, parseQuery } from './query/parser';
+import { Result, formatError, parseQuery } from './query/parser';
 import { DefaultQuerySettings, QueryResponse, queryDocuments } from './query/api';
 import { SearchResult } from './components/SearchResult';
 import { Settings } from './components/Settings';
@@ -39,7 +39,7 @@ function App() {
 					setResults({ ok: false, error: String(r.error) });
 				}
 			} else {
-				setResults({ ok: false, error: query.error.join('\n') });
+				setResults({ ok: false, error: formatError(query.error).join('\n') });
 			}
 		},
 		[querySettings],
@@ -131,37 +131,37 @@ function App() {
 					leave="transition-opacity duration-[10ms]"
 					leaveFrom="opacity-100"
 					leaveTo="opacity-0"
-					className={clsx(
-						'flex flex-col items-center gap-3 w-full lg:w-2/3',
-						isInvalidated(searchStatus) && 'opacity-60',
-					)}
+					className="w-full lg:w-2/3"
 				>
-					{results != null &&
-						(results.ok ? (
-							results.value.total ? (
-								<>
-									<div className="text-gray-400 text-xs self-end">
-										Displaying top {results.value.documents.length} of {results.value.total}{' '}
-										{results.value.total === 1 ? 'result' : 'results'}
+					{results != null && (
+						<div className={clsx('flex flex-col items-center gap-3', isInvalidated(searchStatus) && 'opacity-60')}>
+							{results.ok ? (
+								results.value.total ? (
+									<>
+										<div className="text-gray-400 text-xs self-end">
+											Displaying top {results.value.documents.length} of {results.value.total}{' '}
+											{results.value.total === 1 ? 'result' : 'results'}
+										</div>
+										<ol className="flex flex-col gap-1.5 w-full">
+											{results.value.documents.map((pdoc) => (
+												<li key={pdoc.en + ' ' + pdoc.jp}>
+													<SearchResult pdoc={pdoc} showEnglish={searchSettings.showEnglish} />
+												</li>
+											))}
+										</ol>
+									</>
+								) : (
+									<div className="text-center">
+										No results found.
+										<br />
+										Consider adding more sources in Settings &gt; Document Sources or changing your query.
 									</div>
-									<ol className="flex flex-col gap-1.5 w-full">
-										{results.value.documents.map((pdoc) => (
-											<li key={pdoc.en + ' ' + pdoc.jp}>
-												<SearchResult pdoc={pdoc} showEnglish={searchSettings.showEnglish} />
-											</li>
-										))}
-									</ol>
-								</>
+								)
 							) : (
-								<div className="text-center">
-									No results found.
-									<br />
-									Consider adding more sources in Settings &gt; Document Sources or changing your query.
-								</div>
-							)
-						) : (
-							<div className="text-red-600">{results.error}</div>
-						))}
+								<div className="text-red-600">{results.error}</div>
+							)}
+						</div>
+					)}
 				</Transition>
 				<Transition
 					show={searchStatus === SearchStatus.UNSENT && results == null}

@@ -1,4 +1,13 @@
-import { EmbeddedActionsParser, IRecognitionException, Lexer, ParserMethod, createToken } from 'chevrotain';
+import {
+	EarlyExitException,
+	EmbeddedActionsParser,
+	IRecognitionException,
+	Lexer,
+	MismatchedTokenException,
+	NoViableAltException,
+	ParserMethod,
+	createToken,
+} from 'chevrotain';
 
 export type QueryKind = 'term' | 'tag' | 'not' | 'and' | 'or' | 'seq';
 
@@ -21,6 +30,29 @@ export function parseQuery(input: string): Result<Query, IRecognitionException[]
 		return { ok: false, error: parser.errors };
 	}
 	return { ok: true, value: res };
+}
+
+export function formatError(errors: IRecognitionException[]): string[] {
+	return errors.map((e) => {
+		if (e instanceof EarlyExitException) {
+			return `Syntax error in query at ${
+				e.token.image ? `'${e.token.image}'` : 'end'
+			}: query is malformed, not enough input.`;
+		} else if (e instanceof MismatchedTokenException) {
+			const t = e.message.match(/--> (.+?) <--/)![1];
+			return `Syntax error in query at ${e.token.image ? `'${e.token.image}'` : 'the end'}: expected ${tokenToName(
+				t,
+			)} to be next.`;
+		} else if (e instanceof NoViableAltException) {
+			const ts = [...e.message.matchAll(/\d+\. \[(.+)\]/g)];
+			return `Syntax error in query at ${e.token.image ? `'${e.token.image}'` : 'the end'}: expected one of ${ts
+				.map((t) => tokenToName(t[1]))
+				.sort()
+				.join(', ')}.`;
+		} else {
+			return `Syntax error in query at ${e.token.image ? `'${e.token.image}'` : 'the end'}: query is malformed.`;
+		}
+	});
 }
 
 const WS = createToken({
@@ -68,6 +100,31 @@ const TERM = createToken({
 	name: 'TERM',
 	pattern: /[^|｜&＆{｛}｝(（)）\-ー!！\s]+/,
 });
+
+export function tokenToName(t: string): string {
+	switch (t) {
+		case 'WS':
+			return 'whitespace';
+		case 'PIPE':
+			return "'|'";
+		case 'AND':
+			return "'&'";
+		case 'LB':
+			return "'{'";
+		case 'RB':
+			return "'}'";
+		case 'LP':
+			return "'('";
+		case 'RP':
+			return "')'";
+		case 'MINUS':
+			return "'-' or '!'";
+		case 'TERM':
+			return 'text';
+		default:
+			throw new Error('unknown token type');
+	}
+}
 
 const ALL_TOKENS = [WS, PIPE, AND, LB, RB, LP, RP, MINUS, TERM];
 
