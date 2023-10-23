@@ -81,7 +81,9 @@ export function Settings({
 				</Heading>
 				<div className="flex flex-col gap-2">
 					<Switch
-						className="flex flex-row items-center gap-1"
+						className={({ isFocusVisible }) =>
+							clsx('w-fit flex flex-row items-center gap-1', isFocusVisible && 'rounded-sm ring')
+						}
 						onChange={(t) => {
 							onSearchSettingsChange(
 								produce(searchSettings, (d) => {
