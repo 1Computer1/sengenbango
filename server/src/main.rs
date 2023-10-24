@@ -97,21 +97,13 @@ async fn main() {
         .unwrap();
 }
 
+#[derive(serde::Serialize, Clone, Copy)]
+#[serde(rename_all = "snake_case")]
 enum QueryError {
-    TooComplex,
+    Complex,
     NotMeaningful,
     TookTooLong,
-}
-
-impl QueryError {
-    fn to_msg(&self) -> String {
-        use QueryError::*;
-        match self {
-            TooComplex => "Query is too complex".to_string(),
-            NotMeaningful => "Query does not have any meaningful search terms".to_string(),
-            TookTooLong => "Query took too long, use more specific search terms".to_string(),
-        }
-    }
+    Internal,
 }
 
 #[derive(serde::Serialize)]
@@ -120,12 +112,19 @@ struct QueryResponse {
     documents: Vec<Document>,
 }
 
+#[derive(serde::Serialize)]
+struct QueryErrorResponse {
+    error: QueryError,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    msg: Option<String>,
+}
+
 async fn query(
     State(state): State<ApiState>,
     extract::Json(payload): extract::Json<QueryWithConfig>,
-) -> Result<Json<QueryResponse>, (StatusCode, String)> {
+) -> Result<Json<QueryResponse>, (StatusCode, Json<QueryErrorResponse>)> {
     if payload.query.complexity() > state.max_complexity {
-        return Err(unprocessable_error(QueryError::TooComplex));
+        return Err(unprocessable_error(QueryError::Complex));
     }
     let has_querytree = data::has_querytree(&state.pool, &payload)
         .await
@@ -146,10 +145,19 @@ async fn query(
     }
 }
 
-fn unprocessable_error(error: QueryError) -> (StatusCode, String) {
-    (StatusCode::UNPROCESSABLE_ENTITY, error.to_msg())
+fn unprocessable_error(error: QueryError) -> (StatusCode, Json<QueryErrorResponse>) {
+    (
+        StatusCode::UNPROCESSABLE_ENTITY,
+        Json(QueryErrorResponse { error, msg: None }),
+    )
 }
 
-fn internal_error(err: anyhow::Error) -> (StatusCode, String) {
-    (StatusCode::INTERNAL_SERVER_ERROR, err.to_string())
+fn internal_error(err: anyhow::Error) -> (StatusCode, Json<QueryErrorResponse>) {
+    (
+        StatusCode::INTERNAL_SERVER_ERROR,
+        Json(QueryErrorResponse {
+            error: QueryError::Internal,
+            msg: Some(err.to_string()),
+        }),
+    )
 }

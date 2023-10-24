@@ -32,11 +32,17 @@ function App() {
 			const query = parseQuery(q);
 			if (query.ok) {
 				const isJapanese = q.search(JapaneseRegex) >= 0;
-				const r = await queryDocuments(query.value, isJapanese ? 'japanese' : 'english', querySettings);
-				if (r.ok) {
-					setResults(r);
+				const res = await queryDocuments(query.value, isJapanese ? 'japanese' : 'english', querySettings);
+				if (res.ok) {
+					setResults(res);
 				} else {
-					setResults({ ok: false, error: String(r.error) });
+					const error = {
+						complex: 'Query is too complex, consider using less part-of-speech tags or operators.',
+						not_meaningful: 'Query does not contain meaningful text to search with.',
+						took_too_long: 'Query took too long to process, consider more specific terms or part-of-speech tags.',
+						internal: `Internal server error: ${res.error.msg}`,
+					}[res.error.error];
+					setResults({ ok: false, error });
 				}
 			} else {
 				setResults({ ok: false, error: formatError(query.error).join('\n') });
@@ -139,7 +145,8 @@ function App() {
 								results.value.total ? (
 									<>
 										<div className="text-gray-400 text-xs self-end">
-											Displaying top {results.value.documents.length} of {results.value.total}{' '}
+											Displaying {results.value.documents.length} of{' '}
+											{results.value.total >= 1001 ? '>1000' : results.value.total}{' '}
 											{results.value.total === 1 ? 'result' : 'results'}
 										</div>
 										<ol className="flex flex-col gap-1.5 w-full">

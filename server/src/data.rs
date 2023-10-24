@@ -208,23 +208,25 @@ fn build_has_querytree(qwc: &QueryWithConfig) -> QueryBuilder<'_, Postgres> {
 fn build_query(qwc: &QueryWithConfig) -> QueryBuilder<'_, Postgres> {
     let mut qb = QueryBuilder::new(indoc! {r#"
         with
-        matching AS (
+        matching as (
             select *
             from documents
             where "#});
     qb.push(qwc.lang.to_col());
     qb.push(" @@ (");
     push_tsquery(&qwc.query, &qwc.lang, &mut qb);
-    qb.push(")");
-    qb.push("and source = any(");
+    qb.push(")\n");
+    qb.push("   and source = any(");
     qb.push_bind(
         qwc.sources
             .iter()
             .map(|s| s.to_source())
             .collect::<Vec<_>>(),
     );
-    qb.push(")");
+    qb.push(")\n");
     qb.push(indoc! {r#"
+            order by score desc
+            limit 2000
         )
         select *, count(*) over() as total
         from (select distinct on(jp) * from matching) deduped
@@ -244,14 +246,15 @@ pub async fn query(
     qwc: &QueryWithConfig,
 ) -> Result<(Vec<Document>, i64), anyhow::Error> {
     let mut qb = build_query(qwc);
-    let documents: Vec<QueriedRow> = qb.build_query_as().fetch_all(pool).await?;
-    if documents.is_empty() {
+    let rows: Vec<QueriedRow> = qb.build_query_as().fetch_all(pool).await?;
+    if rows.is_empty() {
         Ok((vec![], 0))
     } else {
-        let total = documents[0].total;
-        Ok((
-            documents.into_iter().map(|x| x.into_document()).collect(),
-            total,
-        ))
+        let total = if rows[0].total >= 1001 {
+            1001
+        } else {
+            rows[0].total
+        };
+        Ok((rows.into_iter().map(|x| x.into_document()).collect(), total))
     }
 }

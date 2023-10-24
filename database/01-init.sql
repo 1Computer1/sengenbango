@@ -36,8 +36,7 @@ declare
     copy_cmd text;
 begin
     truncate documents;
-    -- drop index if exists textsearch_index_jp, textsearch_index_en;
-    drop index if exists textsearch_index_jp, textsearch_index_en, score_index;
+    drop index if exists textsearch_index_jp, textsearch_index_en, score_index, source_index;
 
     foreach s in array known_sources loop
         if sources is null or s = any(sources) then
@@ -47,13 +46,16 @@ begin
         end if;
     end loop;
 
+    raise notice 'Creating indexes';
+
+    -- RUM indexes
     -- create index textsearch_index_jp on documents using rum (textsearch_index_jp_col rum_tsvector_addon_ops, score)
     --     with (attach = 'score', to = 'textsearch_index_jp_col');
-
     -- create index textsearch_index_en on documents using rum (textsearch_index_en_col rum_tsvector_addon_ops, score)
     --     with (attach = 'score', to = 'textsearch_index_en_col');
+    -- create index source_index on documents using btree (source);
 
-    raise notice 'Creating indices';
+    -- GIN indexes
     create index textsearch_index_jp on documents using gin (textsearch_index_jp_col);
     create index textsearch_index_en on documents using gin (textsearch_index_en_col);
     create index score_index on documents using btree (score desc);

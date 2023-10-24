@@ -5,6 +5,13 @@ export interface QueryResponse {
 	documents: ParallelDocument[];
 }
 
+export interface QueryErrorResponse {
+	error: QueryError;
+	msg?: string;
+}
+
+export type QueryError = 'complex' | 'not_meaningful' | 'took_too_long' | 'internal';
+
 export interface ParallelDocument {
 	source: string;
 	jp: string;
@@ -74,7 +81,7 @@ export async function queryDocuments(
 	query: Query,
 	lang: Language,
 	settings: QuerySettings,
-): Promise<Result<QueryResponse, string>> {
+): Promise<Result<QueryResponse, QueryErrorResponse>> {
 	const r = await fetch(import.meta.env.VITE_API_URL + '/v1/query', {
 		method: 'POST',
 		headers: {
@@ -89,5 +96,5 @@ export async function queryDocuments(
 	if (r.ok) {
 		return { ok: true, value: await r.json() };
 	}
-	return { ok: false, error: await r.text() };
+	return { ok: false, error: await r.json() };
 }
