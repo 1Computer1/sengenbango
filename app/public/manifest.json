@@ -1,0 +1,13 @@
+{
+	"short_name": "千言万語",
+	"name": "千言万語",
+	"icons": [
+		{ "src": "book192.png", "sizes": "192x192", "type": "image/png" },
+		{ "src": "book512.png", "sizes": "512x512", "type": "image/png" }
+	],
+	"lang": "en",
+	"start_url": "/",
+	"display": "standalone",
+	"theme_color": "#e34444",
+	"background_color": "#ffffff"
+}
