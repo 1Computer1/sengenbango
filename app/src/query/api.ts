@@ -1,4 +1,4 @@
-import { Query, Result } from './parser';
+import { Queries, Result } from './parser';
 
 export interface QueryResponse {
 	total: number;
@@ -81,8 +81,7 @@ export const DefaultQuerySettings: QuerySettings = {
 };
 
 export async function queryDocuments(
-	query: Query,
-	lang: Language,
+	queries: Queries,
 	settings: QuerySettings,
 ): Promise<Result<QueryResponse, QueryErrorResponse>> {
 	const r = await fetch(import.meta.env.VITE_API_URL + '/v1/query', {
@@ -91,13 +90,16 @@ export async function queryDocuments(
 			'Content-Type': 'application/json',
 		},
 		body: JSON.stringify({
-			query,
-			lang,
+			queries,
 			sources: settings.sources,
 		}),
 	});
-	if (r.ok) {
-		return { ok: true, value: await r.json() };
+	try {
+		if (r.ok) {
+			return { ok: true, value: await r.json() };
+		}
+		return { ok: false, error: await r.json() };
+	} catch (err) {
+		return { ok: false, error: { error: 'internal', msg: String(err) } };
 	}
-	return { ok: false, error: await r.json() };
 }

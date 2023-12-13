@@ -41,10 +41,27 @@ impl QueriedRow {
 
 #[derive(serde::Deserialize)]
 pub struct QueryWithConfig {
-    pub query: Query,
-    pub lang: Language,
+    pub queries: Queries,
     #[serde(default = "all_sources")]
     pub sources: Vec<Source>,
+}
+
+#[derive(serde::Deserialize)]
+#[serde(tag = "t", content = "c", rename_all = "snake_case")]
+pub enum Queries {
+    Single { query: Query, lang: Language },
+    Multiple { queryjp: Query, queryen: Query },
+}
+
+impl Queries {
+    pub fn complexities(&self) -> Vec<usize> {
+        match self {
+            Queries::Single { query, .. } => vec![query.complexity()],
+            Queries::Multiple { queryjp, queryen } => {
+                vec![queryjp.complexity(), queryen.complexity()]
+            }
+        }
+    }
 }
 
 #[derive(serde::Deserialize, Clone, Copy)]
@@ -203,10 +220,22 @@ fn push_tsquery<'a>(query: &'a Query, lang: &'a Language, qb: &mut QueryBuilder<
 }
 
 fn build_has_querytree(qwc: &QueryWithConfig) -> QueryBuilder<'_, Postgres> {
-    let mut qb = QueryBuilder::new("select querytree(");
-    push_tsquery(&qwc.query, &qwc.lang, &mut qb);
-    qb.push(") <> 'T'");
-    qb
+    match &qwc.queries {
+        Queries::Single { query, lang } => {
+            let mut qb = QueryBuilder::new("select querytree(");
+            push_tsquery(query, lang, &mut qb);
+            qb.push(") <> 'T'");
+            qb
+        }
+        Queries::Multiple { queryjp, queryen } => {
+            let mut qb = QueryBuilder::new("select querytree(");
+            push_tsquery(queryjp, &Language::Japanese, &mut qb);
+            qb.push(") <> 'T' and querytree(");
+            push_tsquery(queryen, &Language::English, &mut qb);
+            qb.push(") <> 'T'");
+            qb
+        }
+    }
 }
 
 fn build_query(qwc: &QueryWithConfig) -> QueryBuilder<'_, Postgres> {
@@ -216,10 +245,25 @@ fn build_query(qwc: &QueryWithConfig) -> QueryBuilder<'_, Postgres> {
             select *
             from documents
             where "#});
-    qb.push(qwc.lang.to_col());
-    qb.push(" @@ (");
-    push_tsquery(&qwc.query, &qwc.lang, &mut qb);
-    qb.push(")\n");
+    match &qwc.queries {
+        Queries::Single { query, lang } => {
+            qb.push(lang.to_col());
+            qb.push(" @@ (");
+            push_tsquery(query, lang, &mut qb);
+            qb.push(")\n");
+        }
+        Queries::Multiple { queryjp, queryen } => {
+            qb.push(Language::Japanese.to_col());
+            qb.push(" @@ (");
+            push_tsquery(queryjp, &Language::Japanese, &mut qb);
+            qb.push(")\n");
+            qb.push("   and ");
+            qb.push(Language::English.to_col());
+            qb.push(" @@ (");
+            push_tsquery(queryen, &Language::English, &mut qb);
+            qb.push(")\n");
+        }
+    }
     qb.push("   and source = any(");
     qb.push_bind(
         qwc.sources

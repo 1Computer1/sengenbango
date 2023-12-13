@@ -13,9 +13,6 @@ import clsx from 'clsx';
 import { DefaultSearchSettings } from './util/SearchSettings';
 import { useJSONLocalStorage } from './hooks/useLocalStorage';
 
-const JapaneseRegex =
-	/(?!\p{Punctuation})[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]/u;
-
 function App() {
 	const [querySettings, setQuerySettings] = useJSONLocalStorage('querySettings', DefaultQuerySettings);
 	const [searchSettings, setSearchSettings] = useJSONLocalStorage('searchSettings', DefaultSearchSettings);
@@ -31,8 +28,7 @@ function App() {
 			}
 			const query = parseQuery(q);
 			if (query.ok) {
-				const isJapanese = q.search(JapaneseRegex) >= 0;
-				const res = await queryDocuments(query.value, isJapanese ? 'japanese' : 'english', querySettings);
+				const res = await queryDocuments(query.value, querySettings);
 				if (res.ok) {
 					setResults(res);
 				} else {

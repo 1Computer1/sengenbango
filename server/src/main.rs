@@ -123,7 +123,12 @@ async fn query(
     State(state): State<ApiState>,
     extract::Json(payload): extract::Json<QueryWithConfig>,
 ) -> Result<Json<QueryResponse>, (StatusCode, Json<QueryErrorResponse>)> {
-    if payload.query.complexity() > state.max_complexity {
+    if payload
+        .queries
+        .complexities()
+        .iter()
+        .any(|c| *c > state.max_complexity)
+    {
         return Err(unprocessable_error(QueryError::Complex));
     }
     let has_querytree = data::has_querytree(&state.pool, &payload)

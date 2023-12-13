@@ -2,6 +2,7 @@ import { Heading, Text } from 'react-aria-components';
 import { FaCircleQuestion } from 'react-icons/fa6';
 import { CustomDialog } from './layout/CustomDialog';
 import { Sources } from '../util/Sources.tsx';
+import { Code } from './Code.tsx';
 
 export interface HelpProps {}
 
@@ -24,24 +25,24 @@ export function Help() {
 						The following search operators are available:
 						<ul className="list-disc list-inside">
 							<li>
-								<span className="font-bold font-mono mr-1">A B</span> A must be followed by B.
+								<Code>A B</Code> A must be followed by B.
 							</li>
 							<li>
-								<span className="font-bold font-mono mr-1">A & B</span> Both A and B must match.
+								<Code>A & B</Code> Both A and B must match.
 							</li>
 							<li>
-								<span className="font-bold font-mono mr-1">A | B</span> One of A or B must match.
+								<Code>A | B</Code> One of A or B must match.
 							</li>
 							<li>
-								<span className="font-bold font-mono mr-1">!A</span> A must not match.
+								<Code>!A</Code> A must not match.
 							</li>
 							<li>
-								<span className="font-bold font-mono mr-1">(A)</span> Subqueries can be nested with parentheses.
+								<Code>(A)</Code> Subqueries can be nested with parentheses.
 							</li>
 							<li>
-								<span className="font-bold font-mono mr-1">
+								<Code>
 									{'{'}A{'}'}
-								</span>{' '}
+								</Code>{' '}
 								Part-of-speech tags, e.g. 名詞, can be used instead of words. See{' '}
 								<a
 									href="http://web.archive.org/web/20221001202616/https://www.unixuser.org/~euske/doc/postag/"
@@ -49,7 +50,11 @@ export function Help() {
 								>
 									the ChaSen section here
 								</a>{' '}
-								for the full list. Subtypes can be searched by separating them with middle dots, e.g. 名詞・固有名詞.
+								for the list. Subtypes can be searched by separating them with middle dots, e.g. 名詞・固有名詞.
+							</li>
+							<li>
+								<Code>J : E</Code> The queries J and E are searched in parallel in the two languages. This is useful to
+								find Japanese words being translated to English in certain ways.
 							</li>
 						</ul>
 					</Text>
@@ -101,7 +106,7 @@ export function Help() {
 										{s.short.map((t) => (
 											<>
 												{' '}
-												<span className="font-bold font-mono bg-zinc-300 dark:bg-zinc-700 rounded-sm px-0.5">{t}</span>
+												<Code>{t}</Code>
 											</>
 										))}
 									</div>

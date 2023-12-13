@@ -57,7 +57,7 @@ export function SearchResult({ pdoc: { source, jp, en, score }, showEnglish }: S
 				</div>
 			</Button>
 			<div className="grid-in-[source]">
-				<Text className="text-xs text-gray-400">{source}</Text>
+				<Text className="text-xs align-bottom text-gray-400">{source}</Text>
 			</div>
 			<span className="grid-in-[star] place-self-end text-xs text-yellow-500">{score >= -100 && <FaStar />}</span>
 		</div>

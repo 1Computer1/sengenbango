@@ -19,6 +19,7 @@ import { useTheme } from '../hooks/useTheme';
 import { CustomDialog } from './layout/CustomDialog';
 import { SearchSettings } from '../util/SearchSettings';
 import { Sources } from '../util/Sources';
+import { Code } from './Code';
 
 export interface SettingsProps {
 	querySettings: QuerySettings;
@@ -161,9 +162,11 @@ export function Settings({
 											<span className={clsx('rounded-sm', isFocusVisible && 'ring')}>
 												{isSelected ? <FaRegSquareCheck /> : <FaRegSquare />}
 											</span>
-											<span className="text-sm font-bold font-mono bg-zinc-300 dark:bg-zinc-700 rounded-sm px-0.5">
-												{s} {source.unscored && <span className="-ml-1.5 font-sans text-xs text-red-600">*</span>}
-											</span>
+											<Code>
+												<span className="text-sm">
+													{s} {source.unscored && <span className="-ml-1.5 font-sans text-xs text-red-600">*</span>}
+												</span>
+											</Code>
 										</>
 									)}
 								</Checkbox>

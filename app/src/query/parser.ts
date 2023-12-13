@@ -8,6 +8,11 @@ import {
 	ParserMethod,
 	createToken,
 } from 'chevrotain';
+import type { Language } from './api';
+
+export type Queries =
+	| { t: 'single'; c: { query: Query; lang: Language } }
+	| { t: 'multiple'; c: { queryjp: Query; queryen: Query } };
 
 export type QueryKind = 'term' | 'tag' | 'not' | 'and' | 'or' | 'seq';
 
@@ -22,19 +27,76 @@ export type Query = { t: QueryKind } & (
 
 export type Result<A, B> = { ok: true; value: A } | { ok: false; error: B };
 
-export function parseQuery(input: string): Result<Query, IRecognitionException[]> {
-	const r = lexer.tokenize(input);
-	parser.input = r.tokens;
-	const res = parser.pexpr();
-	if (parser.errors.length) {
-		return { ok: false, error: parser.errors };
+export class CustomException extends Error {
+	public error: string;
+	public constructor(error: string) {
+		super(error);
+		this.error = error;
 	}
-	return { ok: true, value: res };
 }
 
-export function formatError(errors: IRecognitionException[]): string[] {
+const JapaneseRegex =
+	/(?!\p{Punctuation})[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]/u;
+
+export function parseQuery(input: string): Result<Queries, (IRecognitionException | CustomException)[]> {
+	const xs = input.split(/[:：]/);
+	if (xs.length === 1) {
+		const r = lexer.tokenize(xs[0]);
+		parser.input = r.tokens;
+		const res = parser.pexpr();
+		if (parser.errors.length) {
+			return { ok: false, error: parser.errors };
+		}
+		return {
+			ok: true,
+			value: { t: 'single', c: { query: res, lang: xs[0].search(JapaneseRegex) >= 0 ? 'japanese' : 'english' } },
+		};
+	} else if (xs.length === 2) {
+		const r0 = lexer.tokenize(xs[0]);
+		const r1 = lexer.tokenize(xs[1]);
+		parser.input = r0.tokens;
+		const res0 = parser.pexpr();
+		let err0;
+		if (parser.errors.length) {
+			err0 = parser.errors;
+		}
+		parser.input = r1.tokens;
+		const res1 = parser.pexpr();
+		let err1;
+		if (parser.errors.length) {
+			err1 = parser.errors;
+		}
+		if (err0 || err1) {
+			return { ok: false, error: (err0 ?? []).concat(err1 ?? []) };
+		}
+		const queryjp = (xs[0].search(JapaneseRegex) >= 0 && res0) || (xs[1].search(JapaneseRegex) >= 0 && res1);
+		const queryen = (xs[0].search(JapaneseRegex) < 0 && res0) || (xs[1].search(JapaneseRegex) < 0 && res1);
+		if (!queryjp || !queryen || queryjp === queryen) {
+			return { ok: false, error: [new CustomException('mutiple-conflict')] };
+		}
+		return {
+			ok: true,
+			value: { t: 'multiple', c: { queryjp, queryen } },
+		};
+	}
+	return { ok: false, error: [new CustomException('multiple-toomany')] };
+}
+
+export function formatError(errors: (IRecognitionException | CustomException)[]): string[] {
 	return errors.map((e) => {
-		if (e instanceof EarlyExitException) {
+		if (e instanceof CustomException) {
+			switch (e.error) {
+				case 'multiple-toomany': {
+					return 'There can only be two queries in parallel.';
+				}
+				case 'multiple-conflict': {
+					return 'There must be exactly one Japanese query and one English query.';
+				}
+				default: {
+					return 'Unknown error.';
+				}
+			}
+		} else if (e instanceof EarlyExitException) {
 			return `Syntax error in query at ${
 				e.token.image ? `'${e.token.image}'` : 'end'
 			}: query is malformed, not enough input.`;
