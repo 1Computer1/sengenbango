@@ -27,9 +27,11 @@ export type Query = { t: QueryKind } & (
 
 export type Result<A, B> = { ok: true; value: A } | { ok: false; error: B };
 
+export type CustomError = 'multiple-conflict' | 'multiple-toomany';
+
 export class CustomException extends Error {
-	public error: string;
-	public constructor(error: string) {
+	public error: CustomError;
+	public constructor(error: CustomError) {
 		super(error);
 		this.error = error;
 	}
@@ -72,7 +74,7 @@ export function parseQuery(input: string): Result<Queries, (IRecognitionExceptio
 		const queryjp = (xs[0].search(JapaneseRegex) >= 0 && res0) || (xs[1].search(JapaneseRegex) >= 0 && res1);
 		const queryen = (xs[0].search(JapaneseRegex) < 0 && res0) || (xs[1].search(JapaneseRegex) < 0 && res1);
 		if (!queryjp || !queryen || queryjp === queryen) {
-			return { ok: false, error: [new CustomException('mutiple-conflict')] };
+			return { ok: false, error: [new CustomException('multiple-conflict')] };
 		}
 		return {
 			ok: true,
