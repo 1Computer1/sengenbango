@@ -8,8 +8,10 @@ import legal
 import natcom
 import nllb
 import novels
+import opensubtitles
 import reuters
 import tatoeba
+import ted
 import wordnet
 
 def main():
@@ -24,8 +26,10 @@ def main():
         natcom,
         nllb,
         novels,
+        opensubtitles,
         reuters,
         tatoeba,
+        ted,
         wordnet
     ]:
         print(f'=== {x.__name__} ===')

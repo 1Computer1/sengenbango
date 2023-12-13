@@ -33,8 +33,10 @@ export type Source =
 	| 'natcom'
 	| 'nllb'
 	| 'novels'
+	| 'opensubtitles'
 	| 'reuters'
 	| 'tatoeba'
+	| 'ted'
 	| 'wordnet-def'
 	| 'wordnet-exe';
 
@@ -48,7 +50,6 @@ export const RecommendedSources: Source[] = [
 	'bpersona-ja-en',
 	'coursera',
 	'flores',
-	'kyoto',
 	'novels',
 	'reuters',
 	'tatoeba',
@@ -67,8 +68,10 @@ export const AllSources: Source[] = [
 	'natcom',
 	'nllb',
 	'novels',
+	'opensubtitles',
 	'reuters',
 	'tatoeba',
+	'ted',
 	'wordnet-def',
 	'wordnet-exe',
 ];

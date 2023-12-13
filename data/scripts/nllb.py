@@ -7,7 +7,8 @@ from util import clean_spaces, likely_good, is_noise, is_too_english
 from alive_progress import alive_bar
 from datasets import load_dataset
 
-SCORE_THRESHOLD = 1.1
+# scoring was cut off halfway and this one arbitrary sentence was gotten to
+SCORE_THRESHOLD = 1.1126432418823242
 
 def main():
     dataset = load_dataset("allenai/nllb", "eng_Latn-jpn_Jpan", verification_mode='no_checks')['train']

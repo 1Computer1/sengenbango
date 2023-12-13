@@ -93,14 +93,29 @@ export function Help() {
 						<ul className="flex flex-col text-xs gap-2">
 							{Sources.map((s) => (
 								<li key={s.short.join(' ')} className="flex flex-col gap-0.5">
-									<span>
+									<div>
 										⋅{' '}
-										<a href={s.url} className="font-bold font-mono text-blue-600 dark:text-blue-400 underline">
-											{s.short.join(' ')}
+										<a href={s.url} className="text-blue-600 dark:text-blue-400 underline">
+											{s.name}
 										</a>
-									</span>
+										{s.short.map((t) => (
+											<>
+												{' '}
+												<span className="font-bold font-mono bg-zinc-300 dark:bg-zinc-700 rounded-sm px-0.5">{t}</span>
+											</>
+										))}
+									</div>
 									<ul className="flex flex-col text-xs gap-0.5 ml-2">
 										<li>⋅ {s.license}</li>
+										{s.original && (
+											<li>
+												⋅ Data provided by{' '}
+												<a href={s.original} className="text-blue-600 dark:text-blue-400 underline">
+													{s.original}
+												</a>
+												.
+											</li>
+										)}
 										<li>⋅ {s.desc}</li>
 										{s.cites &&
 											s.cites.map((c) => (
@@ -113,6 +128,14 @@ export function Help() {
 													</span>
 												</li>
 											))}
+										{s.unscored && (
+											<li>
+												⋅{' '}
+												<span className="text-red-600">
+													This source is currently not scored properly. Sorting will be inaccurate.
+												</span>
+											</li>
+										)}
 									</ul>
 								</li>
 							))}

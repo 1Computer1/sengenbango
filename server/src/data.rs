@@ -86,8 +86,10 @@ pub enum Source {
     Natcom,
     Nllb,
     Novels,
+    Opensubtitles,
     Reuters,
     Tatoeba,
+    Ted,
     WordnetDef,
     WordnetExe,
 }
@@ -104,7 +106,7 @@ impl Source {
     }
 }
 
-static ALL_SOURCES: [Source; 15] = {
+static ALL_SOURCES: [Source; 17] = {
     use Source::*;
     [
         Basics,
@@ -118,8 +120,10 @@ static ALL_SOURCES: [Source; 15] = {
         Natcom,
         Nllb,
         Novels,
+        Opensubtitles,
         Reuters,
         Tatoeba,
+        Ted,
         WordnetDef,
         WordnetExe,
     ]

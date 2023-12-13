@@ -27,8 +27,10 @@ declare
         'natcom',
         'nllb',
         'novels',
+        'opensubtitles',
         'reuters',
         'tatoeba',
+        'ted',
         'wordnet_def',
         'wordnet_exe'
     ];

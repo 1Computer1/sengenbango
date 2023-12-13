@@ -18,6 +18,7 @@ import clsx from 'clsx';
 import { useTheme } from '../hooks/useTheme';
 import { CustomDialog } from './layout/CustomDialog';
 import { SearchSettings } from '../util/SearchSettings';
+import { Sources } from '../util/Sources';
 
 export interface SettingsProps {
 	querySettings: QuerySettings;
@@ -153,19 +154,27 @@ export function Settings({
 						}}
 					>
 						<div className="flex flex-row flex-wrap gap-x-2 gap-y-2">
-							{AllSources.map((source) => (
-								<Checkbox key={source} value={source} className="flex flex-row items-center gap-1">
+							{Sources.flatMap((source) => source.short.map((s) => [s, source] as const)).map(([s, source]) => (
+								<Checkbox key={s} value={s} className="flex flex-row items-center gap-1">
 									{({ isSelected, isFocusVisible }) => (
 										<>
 											<span className={clsx('rounded-sm', isFocusVisible && 'ring')}>
 												{isSelected ? <FaRegSquareCheck /> : <FaRegSquare />}
 											</span>
-											{source}
+											<span className="text-sm font-bold font-mono bg-zinc-300 dark:bg-zinc-700 rounded-sm px-0.5">
+												{s} {source.unscored && <span className="-ml-1.5 font-sans text-xs text-red-600">*</span>}
+											</span>
 										</>
 									)}
 								</Checkbox>
 							))}
 						</div>
+						{Sources.filter((source) => source.unscored).length > 0 && (
+							<span className="text-xs">
+								<span className="text-red-600">*</span>{' '}
+								<span>These sources are currently not scored properly. Sorting will not be accurate.</span>
+							</span>
+						)}
 					</CheckboxGroup>
 				</div>
 			</div>

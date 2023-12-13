@@ -2,6 +2,7 @@ import re
 
 RE_SPACES = re.compile(r'[\r\n\t\f\v \u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+', flags=re.M)
 RE_EN = re.compile(r'[A-Za-z]')
+RE_JP_KANJI = re.compile(r'[一-龯]')
 RE_JP = re.compile(r'[一-龯ぁ-ゔゞァ-・ヽヾ゛゜]')
 RE_AR = re.compile(r'[\u0621-\u064A]')
 RE_GR = re.compile(r'[\u0370-\u03ff\u1f00-\u1fff]')
@@ -75,7 +76,11 @@ def is_too_english(t):
     """
     For Japanese text.
     """
-    return len(RE_EN.findall(t)) / len(RE_JP.findall(t)) >= 0.5
+    k = len(RE_JP.findall(t))
+    return not k or len(RE_EN.findall(t)) / k >= 0.5
+
+def is_long_enough(en, jp):
+    return len(RE_EN.findall(en)) >= 20 or len(RE_JP.findall(jp)) >= 15 or len(RE_JP_KANJI.findall(jp)) >= 5
 
 def clean_spaces(t):
     return RE_SPACES.sub(' ', t)

@@ -12,8 +12,10 @@ This project uses datasets from the following projects:
 - [ParaNatCom](https://www2.nict.go.jp/astrec-att/member/mutiyama/paranatcom/index.html)
 - [No Language Left Behind](https://huggingface.co/datasets/allenai/nllb)
 - [日英対訳文対応付けデータ](https://www2.nict.go.jp/astrec-att/member/mutiyama/align/index.html)
+- [OpenSubtitles](https://opus.nlpl.eu/OpenSubtitles-v2018.php)
 - [Alignment of Reuters Corpora](https://www2.nict.go.jp/astrec-att/member/mutiyama/jea/reuters/index.html)
 - [Tatoeba](https://tatoeba.org/en)
+- [TED2020](https://opus.nlpl.eu/TED2020-v1.php)
 - [Japanese WordNet](https://bond-lab.github.io/wnja/eng/downloads.html)
 
 Citations and license information are available the app's help modal, generated from [sources.tsx](./app/src/util/sources.tsx).
