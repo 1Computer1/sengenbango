@@ -33,7 +33,7 @@ export function Help() {
 								<span className="font-bold font-mono mr-1">A | B</span> One of A or B must match.
 							</li>
 							<li>
-								<span className="font-bold font-mono mr-1">!A -A</span> A must not match.
+								<span className="font-bold font-mono mr-1">!A</span> A must not match.
 							</li>
 							<li>
 								<span className="font-bold font-mono mr-1">(A)</span> Subqueries can be nested with parentheses.

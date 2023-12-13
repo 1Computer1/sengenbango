@@ -93,12 +93,12 @@ const RP = createToken({
 
 const MINUS = createToken({
 	name: 'MINUS',
-	pattern: /[-ー!！]/,
+	pattern: /[!！]/,
 });
 
 const TERM = createToken({
 	name: 'TERM',
-	pattern: /[^|｜&＆{｛}｝(（)）\-ー!！\s]+/,
+	pattern: /[^|｜&＆{｛}｝(（)）!！\s]+/,
 });
 
 export function tokenToName(t: string): string {
@@ -118,7 +118,7 @@ export function tokenToName(t: string): string {
 		case 'RP':
 			return "')'";
 		case 'MINUS':
-			return "'-' or '!'";
+			return "'!'";
 		case 'TERM':
 			return 'text';
 		default:
